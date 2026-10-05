@@ -121,6 +121,8 @@
 
   // Windows-style reveal light that follows the pointer across the menu bar
   var bar = document.querySelector('.bar');
+  var fg = document.querySelector('.f-glass');
+  fg.addEventListener('pointermove', function (e) { var r = fg.getBoundingClientRect(); fg.style.setProperty('--mx', (e.clientX - r.left) + 'px'); fg.style.setProperty('--my', (e.clientY - r.top) + 'px'); });
   bar.addEventListener('pointermove', function (e) { var r = bar.getBoundingClientRect(); bar.style.setProperty('--mx', (e.clientX - r.left) + 'px'); bar.style.setProperty('--my', (e.clientY - r.top) + 'px'); });
 
   var menuBtn = $('menuBtn'), links = $('navlinks');
