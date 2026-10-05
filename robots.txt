@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://projects473.github.io/wjr/sitemap.xml
+Sitemap: https://projects473.github.io/wjrdemo2/sitemap.xml

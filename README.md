@@ -2,7 +2,7 @@
 
 Website for WJR Taxi Tours & Auto Rentals, Mardigras, St. George, Grenada. Designed and built by [Savvy Tech](https://ghosten22.github.io/savvy-tech/).
 
-Live at: https://projects473.github.io/wjr/
+Live at: https://projects473.github.io/wjrdemo2/
 
 ## Files
 
@@ -21,10 +21,10 @@ The site opens in the white version, where the main brand colour is Peach (Prima
 
 ## Publish or update on GitHub Pages
 
-1. Open the `wjr` repository in the `projects473` account.
+1. Open the `wjrdemo2` repository in the `projects473` account.
 2. Upload everything in this folder to the root of the repository, replacing the old files. Include the hidden `.nojekyll` file.
 3. If Pages is not on yet: **Settings > Pages**, Source **Deploy from a branch**, `main`, `/ (root)`, Save.
-4. Changes go live at https://projects473.github.io/wjr/ within a few minutes.
+4. Changes go live at https://projects473.github.io/wjrdemo2/ within a few minutes.
 
 ## Updating rates
 
