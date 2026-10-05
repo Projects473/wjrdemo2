@@ -7,13 +7,17 @@ Live at: https://projects473.github.io/wjr/
 ## Files
 
 - `index.html`: the page
-- `css/styles.css`: all styling. Brand colours are set at the top: Peach `#FFD3AC`, Sky `#97CCF6` (also the menu bar) and Charcoal `#1E2328` (the page background). The hero animation (photo slideshow, rising GRENADA lettering and the Toyota Noah driving across) is in the Hero section and switches off for visitors who turn on reduced motion. Fonts: Bebas Neue (headings), Kaushan Script (small labels) and Plus Jakarta Sans (text), loaded from Google Fonts.
+- `css/styles.css`: all styling. Brand colours are set at the top: Peach `#FFD3AC`, Sky `#97CCF6` and Charcoal `#1E2328`. The hero animation (photo slideshow, rising GRENADA lettering and the Toyota Noah with the WJR logo driving past palm trees by day, and under the moon, stars and street lamps with its headlights on in the charcoal version) is in the Hero section and switches off for visitors who turn on reduced motion. Fonts: Bebas Neue (headings), Kaushan Script (small labels) and Plus Jakarta Sans (text), loaded from Google Fonts.
 - `js/fares.js`: WJR's taxi rates (116 destinations from 6 pickup areas), used by the rate shown in the booking panel. Edit prices here.
 - `js/main.js`: booking tabs, the rate shown in the booking bar, destination cards (their rates are read from `fares.js`), WhatsApp booking messages, the photo strip and mobile menu
 - `assets/`: WJR logo, favicon and phone home-screen icon
 - `files/WJR-Rental-Agreement.pdf`: the rental agreement linked from the rental terms
 - `robots.txt`, `sitemap.xml`: help Google find and index the site
 - `.nojekyll`: tells GitHub Pages to serve the files as they are
+
+## White and charcoal versions
+
+The site opens in the white version, where the main brand colour is Peach (Primary Colour 1): the menu bar, buttons and highlights. The round button in the menu bar switches to the charcoal version, where the main colour is Sky (Primary Colour 2). A visitor's choice is remembered on their device. To open the charcoal version directly, add `?theme=dark` to the address. To make charcoal the default, remove `data-theme="light"` from the `<html>` tag in `index.html`. The white version's colours are in the section of `css/styles.css` headed "Light version".
 
 ## Publish or update on GitHub Pages
 

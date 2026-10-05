@@ -97,6 +97,32 @@
   var onScroll = function () { nav.classList.toggle('stuck', window.scrollY > 20); };
   window.addEventListener('scroll', onScroll, { passive: true }); onScroll();
 
+  // Charcoal / white version toggle
+  var root = document.documentElement, tBtn = $('themeBtn');
+  var syncBtn = function () { var l = root.getAttribute('data-theme') === 'light'; tBtn.setAttribute('aria-label', l ? 'Switch to the charcoal version' : 'Switch to the white version'); document.querySelector('meta[name="theme-color"]').content = l ? '#FFD3AC' : '#97CCF6'; };
+  tBtn.addEventListener('click', function () {
+    var l = root.getAttribute('data-theme') !== 'light';
+    if (l) root.setAttribute('data-theme', 'light'); else root.removeAttribute('data-theme');
+    try { localStorage.setItem('wjr-theme', l ? 'light' : 'dark'); } catch (e) {}
+    syncBtn();
+  });
+  syncBtn();
+
+  // Highlight the menu link for the section on screen
+  var navA = document.querySelectorAll('.nav-links a');
+  if ('IntersectionObserver' in window) {
+    var spy = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) navA.forEach(function (a) { a.classList.toggle('active', a.getAttribute('href') === '#' + e.target.id); }); });
+    }, { rootMargin: '-45% 0px -50% 0px' });
+    ['destinations', 'tours', 'rentals', 'contact'].forEach(function (id) { var el = $(id); if (el) spy.observe(el); });
+    var heroEl = document.querySelector('.hero');
+    new IntersectionObserver(function (es) { if (es[0].isIntersecting) navA.forEach(function (a) { a.classList.remove('active'); }); }, { rootMargin: '-45% 0px -50% 0px' }).observe(heroEl);
+  }
+
+  // Windows-style reveal light that follows the pointer across the menu bar
+  var bar = document.querySelector('.bar');
+  bar.addEventListener('pointermove', function (e) { var r = bar.getBoundingClientRect(); bar.style.setProperty('--mx', (e.clientX - r.left) + 'px'); bar.style.setProperty('--my', (e.clientY - r.top) + 'px'); });
+
   var menuBtn = $('menuBtn'), links = $('navlinks');
   menuBtn.addEventListener('click', function () { var o = links.classList.toggle('open'); menuBtn.setAttribute('aria-expanded', o); });
   links.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', function () { links.classList.remove('open'); menuBtn.setAttribute('aria-expanded', 'false'); }); });
