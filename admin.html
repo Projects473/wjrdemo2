@@ -64,7 +64,7 @@ h3{font-family:var(--head);font-weight:400;font-size:24px;letter-spacing:.03em;m
 .legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px;font-size:12.5px;color:var(--mute)}
 .legend i{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:-2px;margin-right:6px}
 label{display:block;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);margin:12px 0 5px}
-input[type=text],input[type=tel],input[type=date],textarea{width:100%;border:1.5px solid var(--line);border-radius:4px;padding:11px 12px;outline:none;background:#fff}
+input[type=text],input[type=tel],input[type=email],input[type=date],textarea{width:100%;border:1.5px solid var(--line);border-radius:4px;padding:11px 12px;outline:none;background:#fff}
 input:focus,textarea:focus{border-color:var(--peach-d)}
 textarea{min-height:64px;resize:vertical}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -87,6 +87,13 @@ textarea{min-height:64px;resize:vertical}
 .empty-list{color:var(--mute);padding:10px 0}
 .status{font-size:12.5px;color:var(--mute)}
 [hidden]{display:none!important}
+.req{font-size:10px;font-weight:800;letter-spacing:.06em;color:#fff;background:var(--peach-d);border-radius:3px;padding:1px 5px;margin-left:6px;vertical-align:1px}
+.check{display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:0;font-size:14px;font-weight:600;color:var(--ink);margin-top:14px;cursor:pointer}
+.check input{width:18px;height:18px;accent-color:var(--peach-d)}
+.mailbox{margin-top:10px;padding:12px;border:1.5px dashed var(--peach-d);border-radius:6px;background:#FFF8F1;font-size:13.5px}
+.mailbox .btn{width:100%;margin-top:8px}
+.mini{border:1.5px solid var(--line);background:#fff;border-radius:4px;padding:8px 10px;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap}
+.acts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
 .key{width:100%;font-size:15px;padding:13px 12px;border:1.5px solid var(--line);border-radius:4px;outline:none;font-family:ui-monospace,Menlo,Consolas,monospace}
 .key:focus{border-color:var(--peach-d)}
 .login .pin+.pin{margin-top:8px}
@@ -155,11 +162,14 @@ html,body{overflow-x:hidden}
           <div><label for="end">Return</label><input id="end" type="date" required></div>
         </div>
         <label for="customer">Customer name</label><input id="customer" type="text" autocomplete="off" placeholder="Optional">
+        <label for="email">Customer email <span class="req">Required</span></label><input id="email" type="email" inputmode="email" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="name@example.com" required>
         <label for="phone">Phone or WhatsApp</label><input id="phone" type="tel" autocomplete="off" placeholder="Optional">
         <label for="notes">Notes</label><textarea id="notes" placeholder="Optional: flight, pickup place, deposit paid..."></textarea>
         <div class="est" id="est" hidden></div>
+        <label class="check"><input type="checkbox" id="sendMail" checked> Email the customer a booking confirmation</label>
         <button class="btn btn-peach" type="submit" id="save">Save booking</button>
         <div class="msg" id="addMsg" role="status"></div>
+        <div class="mailbox" id="mailBox" hidden></div>
       </form>
     </div>
 
@@ -365,7 +375,7 @@ html,body{overflow-x:hidden}
     var n = +b.dataset.n, bk = bookedOn(n);
     if (bk) {
       $('dayInfo').className = 'msg';
-      $('dayInfo').textContent = carObj(car).name + ': ' + nice(bk.start) + ' to ' + nice(bk.end) + (bk.customer ? ' · ' + bk.customer : '') + (bk.phone ? ' · ' + bk.phone : '');
+      $('dayInfo').textContent = carObj(car).name + ': ' + nice(bk.start) + ' to ' + nice(bk.end) + (bk.customer ? ' · ' + bk.customer : '') + (bk.email ? ' · ' + bk.email : '') + (bk.phone ? ' · ' + bk.phone : '');
       return;
     }
     $('dayInfo').textContent = '';
@@ -397,7 +407,11 @@ html,body{overflow-x:hidden}
     var s = $('start').value, en = $('end').value || s, thisCar = car;
     if (!s) { msg('err', 'Choose the pick-up date'); return; }
     if (en < s) { msg('err', 'The return date is before the pick-up date'); return; }
-    var details = { customer: $('customer').value.trim(), phone: $('phone').value.trim(), notes: $('notes').value.trim(), added: today };
+    var email = $('email').value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { msg('err', 'Enter the customer\'s email address'); $('email').focus(); return; }
+    var details = { customer: $('customer').value.trim(), email: email, phone: $('phone').value.trim(), notes: $('notes').value.trim(), added: today };
+    var wantMail = $('sendMail').checked;
+    $('mailBox').hidden = true;
     var force = forceNext;
     $('save').disabled = true; msg('', 'Saving...');
     change(function (d) {
@@ -416,11 +430,70 @@ html,body{overflow-x:hidden}
       if (r.stop) { forceNext = true; $('save').textContent = 'Save anyway'; msg('err', r.error + '. Tap "Save anyway" to add it regardless.'); return; }
       forceNext = false; $('save').textContent = 'Save booking'; $('dayInfo').textContent = '';
       selStart = selEnd = null; syncInputs();
-      ['customer', 'phone', 'notes'].forEach(function (id) { $(id).value = ''; });
-      msg('ok', 'Saved. The website calendar will show ' + nice(s) + ' to ' + nice(en) + ' as booked within about a minute.');
+      ['customer', 'email', 'phone', 'notes'].forEach(function (id) { $(id).value = ''; });
+      var saved = 'Saved. The website calendar will show ' + nice(s) + ' to ' + nice(en) + ' as booked within about a minute.';
+      msg('ok', saved);
       render(); synced();
+      if (wantMail) confirmEmail(Object.assign({ car: thisCar, start: s, end: en }, details), saved);
     }).catch(function (err) { $('save').disabled = false; fail(err, $('addMsg')); });
   });
+
+  // A new booking being entered clears the previous email button
+  ['customer', 'email'].forEach(function (id) { $(id).addEventListener('input', function () { $('mailBox').hidden = true; }); });
+  $('days').addEventListener('click', function () { $('mailBox').hidden = true; });
+
+  // ---------- confirmation email ----------
+  // Sends automatically through EmailJS when it is set up in js/rentals.js (email: publicKey, serviceId, templateId).
+  // Otherwise, or if sending fails, Wayne gets a button that opens the same email ready to send in his email app.
+  var EM = R.email || {}, F = R.files || {};
+  var emailAuto = !!(EM.publicKey && EM.serviceId && EM.templateId);
+  function abs(p) { try { return new URL(p, location.href).href; } catch (e) { return p; } }
+  function longDate(s) { return new Date(dnum(s) * DAY).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }); }
+  function buildEmail(bk) {
+    var c = carObj(bk.car), days = Math.max(1, dnum(bk.end) - dnum(bk.start)), rate = days >= 7 ? c.weekly : c.daily;
+    var name = (bk.customer || '').split(' ')[0] || 'there';
+    var subject = 'Booking confirmed: ' + c.name + ', ' + nice(bk.start) + ' to ' + nice(bk.end) + ' | WJR Taxi Tours & Auto Rentals';
+    var rows = [['Vehicle', c.name], ['Pick-up', longDate(bk.start)], ['Return', longDate(bk.end)], ['Rental', days + ' day' + (days > 1 ? 's' : '') + ' at EC$' + rate + ' per day'], ['Estimated total', 'EC$' + (days * rate)]];
+    var terms = ["Bring your driver's licence and a photo ID.", 'A security deposit is paid by cash or card before pickup and returned when the car comes back in the same condition, less anything owed.', 'The car comes with a full tank. Please return it at the same level.', 'Late returns are EC$40 per day unless agreed in advance.'];
+    var agreement = abs(F.agreement || 'files/WJR-Rental-Agreement.pdf');
+    var text = 'Hello ' + name + ',\n\nThank you for choosing WJR Taxi Tours & Auto Rentals. Your car rental is confirmed:\n\n' +
+      rows.map(function (r) { return r[0] + ': ' + r[1]; }).join('\n') +
+      '\n\nBefore pickup:\n' + terms.map(function (t) { return '- ' + t; }).join('\n') +
+      '\n\nFull rental agreement: ' + agreement +
+      '\n\nQuestions or changes? WhatsApp or call +1 (473) 403-7483, or reply to this email.\n\nWJR Taxi Tours & Auto Rentals\nMardigras, St. George, Grenada';
+    var html = '<div style="font-family:Arial,Helvetica,sans-serif;color:#1E2328;max-width:560px;margin:0 auto">' +
+      '<div style="background:#FFD3AC;padding:18px;text-align:center;border-radius:6px 6px 0 0"><img src="' + abs(F.logo || 'assets/wjr-logo-sm.png') + '" alt="WJR Taxi Tours &amp; Auto Rentals" width="180" height="84" style="max-width:180px;height:auto"></div>' +
+      '<div style="border:1px solid #eee;border-top:0;padding:22px;border-radius:0 0 6px 6px">' +
+      '<h2 style="margin:0 0 6px;font-size:22px">Your rental is confirmed</h2><p style="margin:0 0 16px">Hello ' + esc(name) + ', thank you for choosing WJR Taxi Tours &amp; Auto Rentals.</p>' +
+      '<table style="width:100%;border-collapse:collapse;font-size:15px">' + rows.map(function (r, i) { return '<tr><td style="padding:8px 10px;border-bottom:1px solid #eee;color:#5A6570;width:40%">' + r[0] + '</td><td style="padding:8px 10px;border-bottom:1px solid #eee;font-weight:bold' + (i === 4 ? ';color:#C9692A;font-size:17px' : '') + '">' + esc(r[1]) + '</td></tr>'; }).join('') + '</table>' +
+      '<h3 style="font-size:16px;margin:20px 0 6px">Before pickup</h3><ul style="padding-left:18px;margin:0">' + terms.map(function (t) { return '<li style="margin-bottom:4px">' + esc(t) + '</li>'; }).join('') + '</ul>' +
+      '<p style="margin:16px 0"><a href="' + agreement + '" style="color:#C9692A;font-weight:bold">Read the full rental agreement (PDF)</a></p>' +
+      '<p style="margin:0 0 4px">Questions or changes? WhatsApp or call <a href="https://wa.me/14734037483" style="color:#1E2328;font-weight:bold">+1 (473) 403-7483</a>, or reply to this email.</p>' +
+      '<p style="margin:18px 0 0;color:#5A6570;font-size:13px">WJR Taxi Tours &amp; Auto Rentals · Mardigras, St. George, Grenada</p></div></div>';
+    return { to: bk.email, name: bk.customer || '', subject: subject, text: text, html: html };
+  }
+  function mailtoLink(m) { return 'mailto:' + encodeURIComponent(m.to) + '?subject=' + encodeURIComponent(m.subject) + '&body=' + encodeURIComponent(m.text); }
+  function showMailButton(m, intro) {
+    var box = $('mailBox');
+    box.innerHTML = esc(intro) + '<a class="btn" href="' + mailtoLink(m) + '">Open confirmation email to ' + esc(m.to) + '</a>';
+    box.hidden = false;
+  }
+  function confirmEmail(bk, savedText) {
+    var m = buildEmail(bk);
+    if (!emailAuto) { showMailButton(m, 'Tap below to open the confirmation email in your email app, then tap Send.'); return; }
+    msg('ok', (savedText ? savedText + ' ' : '') + 'Sending the confirmation email...');
+    fetch('https://api.emailjs.com/api/v1.0/email/send', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ service_id: EM.serviceId, template_id: EM.templateId, user_id: EM.publicKey,
+        template_params: { to_email: m.to, to_name: m.name, subject: m.subject, message: m.text, message_html: m.html, reply_to: EM.replyTo || 'wjrtt@outlook.com' } })
+    }).then(function (r) {
+      if (!r.ok) throw new Error('send');
+      msg('ok', (savedText ? savedText + ' ' : '') + 'Confirmation email sent to ' + m.to + '.');
+    }).catch(function () {
+      msg('err', savedText ? 'The booking is saved, but the email could not be sent automatically.' : 'The email could not be sent automatically.');
+      showMailButton(m, 'Send it from your email app instead:');
+    });
+  }
 
   // ---------- list and delete ----------
   $('filter').addEventListener('click', function (e) {
@@ -434,10 +507,14 @@ html,body{overflow-x:hidden}
     $('items').innerHTML = list.map(function (b) {
       var c = carObj(b.car) || { name: b.car };
       return '<div class="item"><span class="tag ' + esc(b.car) + '">' + esc(c.name.split(' ')[1] || c.name) + '</span><div><b>' + nice(b.start) + ' to ' + nice(b.end) + '</b><small>' +
-        esc([b.customer, b.phone, b.notes].filter(Boolean).join(' · ') || 'No details') + '</small></div><button type="button" class="del" data-id="' + esc(b.id) + '">Delete</button></div>';
+        esc([b.customer, b.email, b.phone, b.notes].filter(Boolean).join(' · ') || 'No details') + '</small></div><div class="acts">' +
+        (b.email ? '<button type="button" class="mini" data-mail="' + esc(b.id) + '">Email</button>' : '') +
+        '<button type="button" class="del" data-id="' + esc(b.id) + '">Delete</button></div></div>';
     }).join('');
   }
   $('items').addEventListener('click', function (e) {
+    var mb = e.target.closest('[data-mail]');
+    if (mb) { var bk = bookings.filter(function (x) { return x.id === mb.dataset.mail; })[0]; if (bk) { $('addMsg').textContent = ''; confirmEmail(bk, ''); $('mailBox').scrollIntoView({ behavior: 'smooth', block: 'center' }); } return; }
     var b = e.target.closest('.del'); if (!b) return;
     if (delArm !== b.dataset.id) {
       delArm = b.dataset.id; $('items').querySelectorAll('.del').forEach(function (x) { x.classList.remove('sure'); x.textContent = 'Delete'; });

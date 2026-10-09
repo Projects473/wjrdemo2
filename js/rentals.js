@@ -12,6 +12,11 @@
    booked (below) is only a fallback, used if that file cannot be read.
 
    github: where the website lives on GitHub. Change these if the repository is renamed.
+
+   email: the confirmation email sent to customers from admin.html (see SETUP-EMAIL.md).
+     Fill in the three EmailJS values to send automatically. Left empty, the bookings page
+     opens the confirmation in Wayne's email app instead, ready to send.
+   files: the rental agreement and logo used in the confirmation email.
 */
 window.WJR_RENTALS = {
   cars: [
@@ -25,5 +30,7 @@ window.WJR_RENTALS = {
     vezel: [["2026-10-14", "2026-10-20"], ["2026-11-02", "2026-11-06"]]
   },
   bookingsFile: "data/bookings.json",
-  github: { owner: "projects473", repo: "wjrdemo2", branch: "main" }
+  github: { owner: "projects473", repo: "wjrdemo2", branch: "main" },
+  email: { publicKey: "", serviceId: "", templateId: "", replyTo: "wjrtt@outlook.com" },
+  files: { agreement: "files/WJR-Rental-Agreement.pdf", logo: "assets/wjr-logo-sm.png" }
 };

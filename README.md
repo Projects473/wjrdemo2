@@ -13,6 +13,7 @@ Live at: https://projects473.github.io/wjrdemo2/
 - `admin.html`: Wayne's private bookings page (access key and password, not listed on Google)
 - `data/bookings.json`: the rental bookings Wayne manages on `admin.html` (customer details are encrypted)
 - `SETUP-BOOKINGS.md`: how to connect the bookings page
+- `SETUP-EMAIL.md`: how to turn on automatic confirmation emails to customers (EmailJS)
 - `js/main.js`: booking tabs, taxi price rules, rental totals, the availability calendar, destination cards (their rates are read from `fares.js`), WhatsApp booking messages, the photo strip and mobile menu
 - `assets/`: WJR logo, favicon and phone home-screen icon
 - `files/WJR-Rental-Agreement.pdf`: the rental agreement linked from the rental terms
@@ -52,7 +53,7 @@ Open `js/rentals.js`.
 - `daily` is the price per day for rentals of less than 7 days; `weekly` is the price per day for 7 days or more. A rental's length is counted from the pick-up date to the return date (same-day returns count as 1 day).
 - Booked dates are managed on `admin.html`. Wayne logs in, taps the dates, and the booking is saved to `data/bookings.json` in this repository. The calendar reads that file, so the dates show within about a minute. See `SETUP-BOOKINGS.md` to connect it.
 - `data/bookings.json` starts with example bookings for the demo. Delete them on the bookings page before launch.
-- Visitors choose dates and send the request on WhatsApp. WJR confirms on WhatsApp, then adds the booking on the bookings page.
+- Visitors choose dates and send the request on WhatsApp. WJR confirms on WhatsApp, then adds the booking on the bookings page with the customer's email (required). The customer gets a confirmation email (see `SETUP-EMAIL.md`).
 
 ## Before launch
 

@@ -58,7 +58,7 @@
     if (currentTab === 'rentals') { updateRentalOut(); return; }
     if (toSel.value === '') { out.textContent = 'Choose where you are going to see the rate'; return; }
     var q = quote(+fromSel.value, +toSel.value, +paxSel.value);
-    if (q.ec) out.innerHTML = '<span>Your rate</span><b>EC$' + q.ec + '</b><em>US$' + q.us + '</em><small>' + quoteNote(q) + '</small>';
+    if (q.ec) out.innerHTML = '<span>Your rate</span><b>EC$' + q.ec + '</b><em>US$' + q.us + '</em>';
     else out.textContent = q.base === 0 ? 'Same area: message us for the rate' : 'Message us for this rate';
   }
   [fromSel, toSel, paxSel].forEach(function (el) { el.addEventListener('change', updateFareOut); });
@@ -230,7 +230,7 @@
     };
     if (tab === 'taxi') {
       lines = ['Hello WJR Taxi Tours & Auto Rentals, I would like to book a taxi.', 'From: ' + ORIGINS[+fromSel.value].label, 'To: ' + (toSel.value === '' ? '-' : F.rows[+toSel.value][0]), 'Passengers: ' + paxSel.value];
-      if (toSel.value !== '') { var q = quote(+fromSel.value, +toSel.value, +paxSel.value); lines.push('Rate shown: ' + quoteText(q) + (q.ec ? ' (' + quoteNote(q) + ')' : '')); }
+      if (toSel.value !== '') { var q = quote(+fromSel.value, +toSel.value, +paxSel.value); lines.push('Rate shown: ' + quoteText(q)); }
       lines.push('Pickup: ' + when('txWhen'));
     } else if (tab === 'tours') {
       lines = ['Hello WJR Taxi Tours & Auto Rentals, I would like to ask about a tour.', 'Tour: ' + v('toTour'), 'Date: ' + when('toDate'), 'Pickup from: ' + v('toPickup'), 'Guests: ' + v('toGuests')];
