@@ -2,6 +2,13 @@
   "note": "Rental bookings for the website calendar. Managed on admin.html. Customer details are encrypted.",
   "bookings": [
     {
+      "id": "O2M9aSSP",
+      "car": "ignis",
+      "start": "2026-10-09",
+      "end": "2026-10-11",
+      "p": "yEq0zdxrulW+WdBlg6Hzwjmyr2UyPzZXR5qXTHG1YdBAZCTPoG4pVERz4j/TNGzGhZsXndjrloEDXkgXad9cWPMzvD2hYxDAWPOigYcHnaxVrEF8kpuM++1U32J5zuv38H5u2LpKxZUiqFLBaIb6Ga1zzH0YWKdAow/td4c="
+    },
+    {
       "id": "example3",
       "car": "raize",
       "start": "2026-10-10",
@@ -53,5 +60,5 @@
   ],
   "salt": "gTqgqTlWlBUVQUtiq2McxQ==",
   "check": "xyvDdPAdNlcnZ1geK0YGxZ5z+hZfm7MYCszNA66+4Ymccdf2cM+NhA==",
-  "updated": "2026-10-09T19:42:01.990Z"
+  "updated": "2026-10-09T19:42:44.914Z"
 }
