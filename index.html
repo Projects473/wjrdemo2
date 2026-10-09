@@ -161,9 +161,9 @@
         <div class="panel-body">
           <div class="fields" id="p-taxi" role="tabpanel">
             <div class="field has-select"><label for="txFrom"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>Your area</label><select id="txFrom"></select></div>
-            <div class="field has-select"><label for="txTo"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Going to or from</label><select id="txTo"><option value="">Choose a destination</option></select></div>
+            <div class="field has-select"><label for="txTo"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Going to</label><select id="txTo"><option value="">Choose a destination</option></select></div>
             <div class="field date-field"><label for="txWhen"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Date and time</label><input id="txWhen" type="datetime-local"><span class="ph" aria-hidden="true">Select date and time</span></div>
-            <div class="field"><label for="txGuests"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5M16 4.5a3.5 3.5 0 0 1 0 7M18 14.6c2 .7 3.2 2.6 3.5 5.4"/></svg>Guests</label><input id="txGuests" type="text" placeholder="2 adults"></div>
+            <div class="field has-select"><label for="txPax"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5M16 4.5a3.5 3.5 0 0 1 0 7M18 14.6c2 .7 3.2 2.6 3.5 5.4"/></svg>Passengers</label><select id="txPax"><option value="1">1 passenger</option><option value="2" selected>2 passengers</option><option value="3">3 passengers</option><option value="4">4 passengers</option><option value="5">5 passengers</option><option value="6">6 passengers</option><option value="7">7 passengers</option><option value="8">8 passengers</option><option value="9">9 passengers</option><option value="10">10 passengers</option></select></div>
             <button class="btn" type="submit">Book this ride</button>
           </div>
           <div class="fields" id="p-tours" role="tabpanel" hidden>
@@ -192,7 +192,7 @@
       <div class="head-row rv">
         <h2 class="h2"><span class="label">Destinations</span>Where will <span class="o">you</span> go<br><span class="sky">next?</span></h2>
         <div style="display:flex;gap:30px;align-items:flex-end">
-          <p>Rates from Maurice Bishop International Airport. Tap a place to load it into the booking bar. More than 100 places are listed there.</p>
+          <p>Rates from Maurice Bishop International Airport for 1 to 2 passengers, including the EC$10 airport pickup. Each extra passenger adds EC$10. Tap a place to load it into the booking bar.</p>
           <div class="arrows"><button type="button" id="prev" aria-label="Previous"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button><button type="button" id="next" aria-label="Next"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
         </div>
       </div>
@@ -275,20 +275,37 @@
           <div class="pic"><img title="Photo: Vauxford, CC BY-SA 4.0" src="https://thumb.wikimedia.org/wikipedia/commons/thumb/5/50/2017_Suzuki_Ignis_SZ-T_Dualjet_Automatic_1.2.jpg/960px-2017_Suzuki_Ignis_SZ-T_Dualjet_Automatic_1.2.jpg" alt="Blue Suzuki Ignis hybrid, the same model and colour as WJR Taxi Tours &amp; Auto Rentals' rental" loading="lazy"><span class="yr">2016</span></div>
           <div class="body"><h3>Suzuki Ignis Hybrid</h3>
             <ul class="specs"><li><span class="sw" style="background:#2c4f9e"></span>Blue metallic</li><li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5"/></svg>4 seats</li><li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>1.2 L hybrid</li><li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M8 9v6M16 9v6"/></svg>Automatic</li></ul>
-            <div class="row"><span>Daily rate on request</span><button class="btn btn-peach btn-sm" type="button" data-car="Suzuki Ignis Hybrid (4 seats)">Reserve</button></div></div>
+            <div class="rates"><div><b>EC$130</b><span>per day</span><small>1 to 6 days</small></div><div><b>EC$110</b><span>per day</span><small>7 days or more</small></div></div><div class="row"><button class="btn btn-ghost btn-sm" type="button" data-cal="Suzuki Ignis Hybrid (4 seats)">See availability</button><button class="btn btn-peach btn-sm" type="button" data-car="Suzuki Ignis Hybrid (4 seats)">Reserve</button></div></div>
         </article>
         <article class="car rv">
           <div class="pic"><img title="Photo: Tokumeigakarinoaoshima, CC BY-SA 4.0" src="https://thumb.wikimedia.org/wikipedia/commons/thumb/0/07/Toyota_RAIZE_HYBRID_Z_%285AA-A202A-GBSH%29_front.jpg/960px-Toyota_RAIZE_HYBRID_Z_%285AA-A202A-GBSH%29_front.jpg" alt="White Toyota Raize Hybrid, the same model and colour as WJR Taxi Tours &amp; Auto Rentals' rental" loading="lazy"><span class="yr">2022</span></div>
           <div class="body"><h3>Toyota Raize Hybrid</h3>
             <ul class="specs"><li><span class="sw" style="background:#fff"></span>White</li><li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5"/></svg>5 seats</li><li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>1.2 L hybrid</li><li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M8 9v6M16 9v6"/></svg>Automatic</li></ul>
-            <div class="row"><span>Daily rate on request</span><button class="btn btn-peach btn-sm" type="button" data-car="Toyota Raize Hybrid (5 seats)">Reserve</button></div></div>
+            <div class="rates"><div><b>EC$150</b><span>per day</span><small>1 to 6 days</small></div><div><b>EC$120</b><span>per day</span><small>7 days or more</small></div></div><div class="row"><button class="btn btn-ghost btn-sm" type="button" data-cal="Toyota Raize Hybrid (5 seats)">See availability</button><button class="btn btn-peach btn-sm" type="button" data-car="Toyota Raize Hybrid (5 seats)">Reserve</button></div></div>
         </article>
         <article class="car rv">
           <div class="pic"><img class="vezel" title="Photo: RL GNZLZ, CC BY-SA 2.0" src="https://thumb.wikimedia.org/wikipedia/commons/thumb/5/59/Honda_HR-V_1.8_LX_2017_%2833297473264%29.jpg/960px-Honda_HR-V_1.8_LX_2017_%2833297473264%29.jpg" alt="Brown Honda Vezel (HR-V), the same model and colour as WJR Taxi Tours &amp; Auto Rentals' rental" loading="lazy"><span class="yr">2018</span></div>
           <div class="body"><h3>Honda Vezel Hybrid</h3>
             <ul class="specs"><li><span class="sw" style="background:#5a4a40"></span>Brown</li><li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5"/></svg>5 seats</li><li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>1.5 L hybrid</li><li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M8 9v6M16 9v6"/></svg>Automatic</li></ul>
-            <div class="row"><span>Daily rate on request</span><button class="btn btn-peach btn-sm" type="button" data-car="Honda Vezel Hybrid (5 seats)">Reserve</button></div></div>
+            <div class="rates"><div><b>EC$160</b><span>per day</span><small>1 to 6 days</small></div><div><b>EC$120</b><span>per day</span><small>7 days or more</small></div></div><div class="row"><button class="btn btn-ghost btn-sm" type="button" data-cal="Honda Vezel Hybrid (5 seats)">See availability</button><button class="btn btn-peach btn-sm" type="button" data-car="Honda Vezel Hybrid (5 seats)">Reserve</button></div></div>
         </article>
+      </div>
+      <div class="cal-wrap rv" id="availability">
+        <div class="cal-head">
+          <div>
+            <h3>Availability calendar</h3>
+            <p>Pick a car, then tap your pick-up date and your return date. Dates that are already booked are crossed out.</p>
+          </div>
+          <div class="cal-cars" role="group" aria-label="Choose a car" id="calCars"></div>
+        </div>
+        <div class="cal-body">
+          <div class="cal-months">
+            <div class="cal-nav"><button type="button" id="calPrev" aria-label="Previous month"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button><button type="button" id="calNext" aria-label="Next month"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button></div>
+            <div class="cal-grid" id="calGrid"></div>
+            <div class="cal-legend"><span><i class="lg-free"></i>Available</span><span><i class="lg-booked"></i>Booked</span><span><i class="lg-pick"></i>Your dates</span></div>
+          </div>
+          <aside class="cal-sum" id="calSum" aria-live="polite"></aside>
+        </div>
       </div>
     </div>
   </section>
@@ -318,7 +335,7 @@
       <div class="rv">
         <h2 class="h2"><span class="label">Good to know</span>Rental terms<br><span class="o">at a</span> <span class="sky">glance</span></h2>
         <p class="lede" style="margin-left:0">The short version of the WJR Taxi Tours &amp; Auto Rentals rental agreement. Ask on WhatsApp if anything is unclear.</p>
-        <a class="btn btn-ghost" href="files/WJR-Rental-Agreement.pdf" target="_blank" rel="noopener">Full rental agreement (PDF)</a>
+        <a class="btn btn-ghost" href="https://projects473.github.io/wjrdemo2/WJR-Rental-Agreement.pdf" target="_blank" rel="noopener">Full rental agreement (PDF)</a>
       </div>
       <div class="know-cards">
         <div class="kc glass rv"><i>“</i><h3>What to bring</h3><p>Your driver's licence and a photo ID.</p></div>
@@ -404,6 +421,7 @@
 </div>
 
 <script src="js/fares.js"></script>
+<script src="js/rentals.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

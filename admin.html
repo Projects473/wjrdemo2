@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="en-GD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bookings | WJR Taxi Tours &amp; Auto Rentals</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#FFD3AC">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--peach:#FFD3AC;--peach-d:#C9692A;--sky:#97CCF6;--ink:#1E2328;--mute:#5A6570;--line:rgba(30,35,40,.12);--soft:#F7F4F1;--red:#E4573D;--ok:#2E9E5B;
+  --head:"Bebas Neue",Impact,"Arial Narrow",sans-serif;--sans:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.5 var(--sans);color:var(--ink);background:#fff;-webkit-text-size-adjust:100%}
+button,input,select,textarea{font:inherit;color:inherit}
+.top{position:sticky;top:0;z-index:5;background:rgba(255,211,172,.9);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.6)}
+.top .in{max-width:1100px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:12px}
+.top img{height:40px;width:auto;background:#fff;border-radius:4px;padding:3px 6px}
+.top h1{font-family:var(--head);font-weight:400;font-size:26px;letter-spacing:.03em;margin:0;line-height:1}
+.top small{display:block;font-size:12px;color:var(--mute);font-weight:600}
+.top .sp{flex:1}
+.wrap{max-width:1100px;margin:0 auto;padding:20px 16px 60px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;cursor:pointer;text-decoration:none;font-weight:800;font-size:13px;letter-spacing:.06em;text-transform:uppercase;border-radius:4px;padding:13px 20px;background:var(--ink);color:#fff;transition:background .2s,transform .1s}
+.btn:active{transform:scale(.98)}
+.btn-peach{background:var(--peach);color:var(--ink)}
+.btn-line{background:#fff;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--line)}
+.btn-sm{padding:9px 14px;font-size:12px}
+.btn:disabled{opacity:.5;cursor:default}
+.card{background:#fff;border:1px solid var(--line);border-radius:8px;padding:20px;box-shadow:0 10px 30px rgba(30,35,40,.06)}
+.login{max-width:380px;margin:8vh auto 0;text-align:center}
+.login img{height:90px;margin:0 auto 10px;display:block}
+.login h2{font-family:var(--head);font-weight:400;font-size:34px;margin:0}
+.login p{color:var(--mute);margin:6px 0 18px}
+.pin{width:100%;font-size:20px;letter-spacing:.12em;text-align:center;padding:12px;border:1.5px solid var(--line);border-radius:4px;outline:none}
+.pin:focus{border-color:var(--peach-d)}
+.login .btn{width:100%;margin-top:12px}
+.msg{min-height:22px;margin-top:10px;font-weight:700;font-size:14px}
+.msg.err{color:var(--red)}.msg.ok{color:var(--ok)}
+.banner{background:#FFF4E6;border:1px solid #F5C99A;color:#7A4A1E;border-radius:6px;padding:10px 14px;font-size:13.5px;margin-bottom:16px}
+.cars{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.cars button{border:1.5px solid var(--line);background:#fff;border-radius:4px;padding:10px 14px;font-weight:800;font-size:13px;cursor:pointer}
+.cars button[aria-pressed="true"]{background:var(--peach);border-color:var(--peach)}
+.cars button i{font-style:normal;font-weight:600;color:var(--mute);margin-left:6px}
+.grid{display:grid;grid-template-columns:1.35fr 1fr;gap:20px;align-items:start}
+h3{font-family:var(--head);font-weight:400;font-size:24px;letter-spacing:.03em;margin:0 0 12px}
+.cal-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.cal-top b{font-family:var(--head);font-weight:400;font-size:22px;letter-spacing:.05em}
+.nav{width:38px;height:38px;border-radius:4px;border:1.5px solid var(--line);background:#fff;cursor:pointer;font-size:18px}
+.nav:disabled{opacity:.35}
+.days{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.dow{text-align:center;font-size:11px;font-weight:800;color:var(--mute);padding-bottom:2px}
+.day{aspect-ratio:1;border:0;border-radius:4px;background:var(--soft);font-weight:700;font-size:14px;cursor:pointer;position:relative}
+.day.empty{background:none;cursor:default}
+.day.past{opacity:.35}
+.day.booked{background:repeating-linear-gradient(135deg,rgba(228,87,61,.18) 0 5px,#fff 5px 10px);color:var(--red)}
+.day.booked::after{content:"";position:absolute;left:24%;right:24%;bottom:18%;height:3px;border-radius:2px;background:var(--red)}
+.day.today{box-shadow:inset 0 0 0 2px var(--peach-d)}
+.day.sel{background:var(--peach);color:var(--ink)}
+.day.in{background:rgba(255,211,172,.45)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px;font-size:12.5px;color:var(--mute)}
+.legend i{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:-2px;margin-right:6px}
+label{display:block;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);margin:12px 0 5px}
+input[type=text],input[type=tel],input[type=date],textarea{width:100%;border:1.5px solid var(--line);border-radius:4px;padding:11px 12px;outline:none;background:#fff}
+input:focus,textarea:focus{border-color:var(--peach-d)}
+textarea{min-height:64px;resize:vertical}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.est{margin-top:12px;padding:10px 12px;background:var(--soft);border-radius:4px;font-size:14px}
+.est b{font-family:var(--head);font-weight:400;font-size:26px;color:var(--peach-d);margin-left:6px}
+.form .btn{width:100%;margin-top:14px}
+.list{margin-top:20px}
+.lh{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.filter{display:flex;gap:6px}
+.filter button{border:1.5px solid var(--line);background:#fff;border-radius:4px;padding:7px 10px;font-weight:700;font-size:12.5px;cursor:pointer}
+.filter button[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.item{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+.item:first-of-type{border-top:0}
+.tag{font-family:var(--head);font-size:16px;letter-spacing:.05em;padding:4px 8px 2px;border-radius:4px;background:var(--peach)}
+.tag.raize{background:#E3F1FD}.tag.vezel{background:#EFE6DE}
+.item b{display:block}
+.item small{color:var(--mute)}
+.del{border:1.5px solid rgba(228,87,61,.4);color:var(--red);background:#fff;border-radius:4px;padding:8px 10px;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap}
+.del.sure{background:var(--red);color:#fff;border-color:var(--red)}
+.empty-list{color:var(--mute);padding:10px 0}
+.status{font-size:12.5px;color:var(--mute)}
+[hidden]{display:none!important}
+.key{width:100%;font-size:15px;padding:13px 12px;border:1.5px solid var(--line);border-radius:4px;outline:none;font-family:ui-monospace,Menlo,Consolas,monospace}
+.key:focus{border-color:var(--peach-d)}
+.login .pin+.pin{margin-top:8px}
+.linkbtn{background:none;border:0;color:var(--mute);text-decoration:underline;font-size:13px;margin-top:14px;cursor:pointer}
+details.more summary{cursor:pointer;font-family:var(--head);font-size:22px;letter-spacing:.03em}
+details.more form{margin-top:8px}
+details.more .btn{margin-top:14px}
+@media (max-width:860px){.grid{grid-template-columns:1fr}}
+@media (max-width:560px){.top .in{gap:8px;padding:8px 12px}.top h1{font-size:21px}.top small{display:none}.top img{height:32px}.top .btn-sm{padding:8px 10px;font-size:11px}.wrap{padding:16px 12px 50px}.card{padding:16px}.grid>*,.list{min-width:0}.lh{flex-wrap:wrap}}
+html,body{overflow-x:hidden}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="in">
+    <img src="assets/wjr-logo-sm.png" alt="WJR Taxi Tours &amp; Auto Rentals">
+    <div><h1>Rental bookings</h1><small>WJR Taxi Tours &amp; Auto Rentals</small></div>
+    <div class="sp"></div>
+    <button class="btn btn-line btn-sm" id="refresh" hidden>Refresh</button>
+    <button class="btn btn-sm" id="logout" hidden>Lock</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- One-time setup on a new phone or computer -->
+  <section class="login card" id="setup" hidden>
+    <img src="assets/wjr-logo-sm.png" alt="">
+    <h2>Set up this device</h2>
+    <p>Paste the access key from Savvy Tech. This is only needed once on each phone or computer.</p>
+    <form id="setupForm">
+      <input class="key" id="token" type="password" autocomplete="off" spellcheck="false" placeholder="github_pat_..." aria-label="Access key">
+      <button class="btn btn-peach" type="submit">Connect</button>
+    </form>
+    <div class="msg" id="setupMsg" role="status"></div>
+  </section>
+
+  <!-- Password -->
+  <section class="login card" id="login" hidden>
+    <img src="assets/wjr-logo-sm.png" alt="">
+    <h2 id="loginTitle">Bookings</h2>
+    <p id="loginText">Enter your password to manage rental bookings.</p>
+    <form id="loginForm">
+      <input class="pin" id="pin" type="password" autocomplete="current-password" placeholder="Password" aria-label="Password">
+      <input class="pin" id="pin2" type="password" autocomplete="new-password" placeholder="Repeat password" aria-label="Repeat password" hidden>
+      <button class="btn btn-peach" type="submit" id="loginBtn">Open bookings</button>
+    </form>
+    <div class="msg" id="loginMsg" role="status"></div>
+    <button class="linkbtn" type="button" id="forget">Disconnect this device</button>
+  </section>
+
+  <section id="app" hidden>
+    <div class="cars" id="cars" role="group" aria-label="Choose a car"></div>
+    <div class="grid">
+      <div class="card">
+        <div class="cal-top"><button class="nav" id="prev" aria-label="Previous month">‹</button><b id="month"></b><button class="nav" id="next" aria-label="Next month">›</button></div>
+        <div class="days" id="days"></div>
+        <div class="legend"><span><i style="background:var(--soft)"></i>Free</span><span><i style="background:repeating-linear-gradient(135deg,rgba(228,87,61,.35) 0 3px,#fff 3px 6px)"></i>Booked</span><span><i style="background:var(--peach)"></i>New booking</span></div>
+        <p class="status">Tap the pick-up day, then the return day. Tap a booked day to see who has it.</p>
+        <div class="msg" id="dayInfo"></div>
+      </div>
+      <form class="card form" id="addForm">
+        <h3>Add a booking</h3>
+        <div class="two">
+          <div><label for="start">Pick-up</label><input id="start" type="date" required></div>
+          <div><label for="end">Return</label><input id="end" type="date" required></div>
+        </div>
+        <label for="customer">Customer name</label><input id="customer" type="text" autocomplete="off" placeholder="Optional">
+        <label for="phone">Phone or WhatsApp</label><input id="phone" type="tel" autocomplete="off" placeholder="Optional">
+        <label for="notes">Notes</label><textarea id="notes" placeholder="Optional: flight, pickup place, deposit paid..."></textarea>
+        <div class="est" id="est" hidden></div>
+        <button class="btn btn-peach" type="submit" id="save">Save booking</button>
+        <div class="msg" id="addMsg" role="status"></div>
+      </form>
+    </div>
+
+    <div class="card list">
+      <div class="lh"><h3>Upcoming bookings</h3><div class="filter" id="filter"><button type="button" data-f="car" aria-pressed="true">This car</button><button type="button" data-f="all" aria-pressed="false">All cars</button></div></div>
+      <div id="items"></div>
+      <p class="status" id="sync"></p>
+    </div>
+
+    <details class="card list more">
+      <summary>Change password</summary>
+      <form id="pinForm">
+        <div class="two">
+          <div><label for="newPin">New password</label><input id="newPin" type="password" autocomplete="new-password"></div>
+          <div><label for="newPin2">Repeat new password</label><input id="newPin2" type="password" autocomplete="new-password"></div>
+        </div>
+        <button class="btn" type="submit">Change password</button>
+        <div class="msg" id="pinMsg" role="status"></div>
+      </form>
+    </details>
+  </section>
+</main>
+
+<script src="js/rentals.js"></script>
+<script>
+(function () {
+  var R = window.WJR_RENTALS, G = R.github || {};
+  var FILE = R.bookingsFile || 'data/bookings.json';
+  var API = (G.apiBase || 'https://api.github.com') + '/repos/' + G.owner + '/' + G.repo + '/contents/' + FILE;
+  var $ = function (id) { return document.getElementById(id); };
+  var DAY = 86400000, ITER = 310000;
+  var token = '', key = null, file = null, sha = null, bookings = [], car = R.cars[0].id;
+  var selStart = null, selEnd = null, monthOffset = 0, filter = 'car', delArm = null, forceNext = false;
+  var enc = new TextEncoder(), dec = new TextDecoder();
+
+  // ---------- helpers ----------
+  function ls(k, v) { try { if (v === undefined) return localStorage.getItem(k); if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) { return null; } }
+  function b64(u8) { var s = ''; for (var i = 0; i < u8.length; i++) s += String.fromCharCode(u8[i]); return btoa(s); }
+  function unb64(s) { var bin = atob(s), u = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return u; }
+  function dnum(s) { var p = s.split('-'); return Date.UTC(+p[0], +p[1] - 1, +p[2]) / DAY; }
+  function dstr(n) { return new Date(n * DAY).toISOString().slice(0, 10); }
+  function nice(s) { return new Date(dnum(s) * DAY).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' }); }
+  var todayN = Math.floor((Date.now() - new Date().getTimezoneOffset() * 60000) / DAY), today = dstr(todayN);
+  function carObj(id) { return R.cars.filter(function (c) { return c.id === id; })[0]; }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function show(id) { ['setup', 'login', 'app'].forEach(function (s) { $(s).hidden = s !== id; }); $('logout').hidden = $('refresh').hidden = id !== 'app'; }
+
+  // ---------- encryption: customer details are locked with the password ----------
+  function deriveKey(pin, salt) {
+    return crypto.subtle.importKey('raw', enc.encode(pin), 'PBKDF2', false, ['deriveKey']).then(function (base) {
+      return crypto.subtle.deriveKey({ name: 'PBKDF2', salt: unb64(salt), iterations: ITER, hash: 'SHA-256' }, base, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+    });
+  }
+  function seal(k, obj) {
+    var iv = crypto.getRandomValues(new Uint8Array(12));
+    return crypto.subtle.encrypt({ name: 'AES-GCM', iv: iv }, k, enc.encode(JSON.stringify(obj))).then(function (ct) {
+      var out = new Uint8Array(12 + ct.byteLength); out.set(iv); out.set(new Uint8Array(ct), 12); return b64(out);
+    });
+  }
+  function unseal(k, s) {
+    var u = unb64(s);
+    return crypto.subtle.decrypt({ name: 'AES-GCM', iv: u.slice(0, 12) }, k, u.slice(12)).then(function (pt) { return JSON.parse(dec.decode(pt)); });
+  }
+
+  // ---------- GitHub storage ----------
+  function hdr() { return { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json' }; }
+  function load() {
+    return fetch(API + '?ref=' + encodeURIComponent(G.branch || 'main') + '&t=' + Date.now(), { headers: hdr(), cache: 'no-store' }).then(function (r) {
+      if (r.status === 404) return { data: { bookings: [] }, sha: null };
+      if (r.status === 401 || r.status === 403) throw new Error('auth');
+      if (!r.ok) throw new Error('GitHub error ' + r.status);
+      return r.json().then(function (j) { return { data: JSON.parse(dec.decode(unb64(j.content.replace(/\s/g, '')))), sha: j.sha }; });
+    });
+  }
+  function put(data, prevSha, message) {
+    data.updated = new Date().toISOString();
+    var body = { message: message, content: b64(enc.encode(JSON.stringify(data, null, 2) + '\n')), branch: G.branch || 'main' };
+    if (prevSha) body.sha = prevSha;
+    return fetch(API, { method: 'PUT', headers: Object.assign({ 'Content-Type': 'application/json' }, hdr()), body: JSON.stringify(body) }).then(function (r) {
+      if (r.status === 409 || r.status === 422) { var e = new Error('conflict'); e.conflict = true; throw e; }
+      if (r.status === 401 || r.status === 403) throw new Error('auth');
+      if (!r.ok) throw new Error('GitHub error ' + r.status);
+      return r.json().then(function (j) { return j.content.sha; });
+    });
+  }
+  // Load the latest file, apply a change, save. Retries if someone else saved at the same time.
+  function change(fn, message, tries) {
+    tries = tries || 0;
+    return load().then(function (res) {
+      return Promise.resolve(fn(res.data)).then(function (result) {
+        if (result && result.stop) return result;
+        return put(res.data, res.sha, message).then(function (newSha) { file = res.data; sha = newSha; return decryptAll().then(function () { return result || {}; }); });
+      });
+    }).catch(function (e) {
+      if (e.conflict && tries < 3) return change(fn, message, tries + 1);
+      throw e;
+    });
+  }
+  function decryptAll() {
+    return Promise.all((file.bookings || []).map(function (b) {
+      if (!b.p || !key) return Promise.resolve(Object.assign({}, b, { customer: b.example ? 'Example booking' : '', phone: '', notes: '' }));
+      return unseal(key, b.p).then(function (d) { return Object.assign({}, b, d); }, function () { return Object.assign({}, b, { customer: '(locked)', phone: '', notes: '' }); });
+    })).then(function (list) { bookings = list; });
+  }
+  function fail(e, el) {
+    var t = e.message === 'auth' ? 'The access key was refused. It may have expired; ask Savvy Tech for a new one.' : (e.message === 'Failed to fetch' ? 'No connection. Check the internet and try again.' : e.message);
+    el.className = 'msg err'; el.textContent = t;
+    if (e.message === 'auth') { ls('wjr-gh-token', null); }
+  }
+
+  // ---------- setup, password and start ----------
+  function start() {
+    token = ls('wjr-gh-token') || '';
+    var h = location.hash.match(/key=([^&]+)/);
+    if (h) { token = decodeURIComponent(h[1]); ls('wjr-gh-token', token); history.replaceState(null, '', location.pathname); }
+    if (!token) { show('setup'); return; }
+    show('login'); $('loginMsg').textContent = 'Connecting...';
+    load().then(function (res) {
+      file = res.data; sha = res.sha; $('loginMsg').textContent = '';
+      var first = !file.salt;
+      $('pin2').hidden = !first;
+      $('loginTitle').textContent = first ? 'Create a password' : 'Bookings';
+      $('loginText').textContent = first ? 'Choose a password of at least 8 characters, for example three words. It locks customer names and phone numbers. Keep it safe: it cannot be recovered.' : 'Enter your password to manage rental bookings.';
+      $('loginBtn').textContent = first ? 'Create password' : 'Open bookings';
+      $('pin').focus();
+    }).catch(function (e) { fail(e, $('loginMsg')); if (e.message === 'auth') setTimeout(function () { show('setup'); $('setupMsg').className = 'msg err'; $('setupMsg').textContent = 'The access key was refused. Paste a new one.'; }, 1500); });
+  }
+  $('setupForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    token = $('token').value.trim(); if (!token) return;
+    $('setupMsg').className = 'msg'; $('setupMsg').textContent = 'Checking...';
+    load().then(function () { ls('wjr-gh-token', token); $('token').value = ''; $('setupMsg').textContent = ''; start(); })
+      .catch(function (err) { fail(err, $('setupMsg')); });
+  });
+  $('forget').addEventListener('click', function () { ls('wjr-gh-token', null); token = ''; key = null; show('setup'); });
+  $('loginForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var pin = $('pin').value.trim(), m = $('loginMsg');
+    if (!file) return;
+    if (!pin) return;
+    m.className = 'msg'; m.textContent = 'Opening...';
+    if (!file.salt) {
+      if (pin.length < 8) { m.className = 'msg err'; m.textContent = 'Use at least 8 characters'; return; }
+      if (pin !== $('pin2').value.trim()) { m.className = 'msg err'; m.textContent = 'The two passwords are different'; return; }
+      var salt = b64(crypto.getRandomValues(new Uint8Array(16)));
+      deriveKey(pin, salt).then(function (k) {
+        key = k;
+        return change(function (d) {
+          if (d.salt) return { stop: true, error: 'A password was just created on another device. Reload the page.' };
+          d.salt = salt;
+          return seal(k, { ok: 'wjr' }).then(function (c) { d.check = c; });
+        }, 'Set up bookings password');
+      }).then(function (r) { if (r.stop) { m.className = 'msg err'; m.textContent = r.error; return; } openApp(); })
+        .catch(function (err) { fail(err, m); });
+      return;
+    }
+    deriveKey(pin, file.salt).then(function (k) {
+      return unseal(k, file.check).then(function () { key = k; return decryptAll(); }, function () { throw new Error('Wrong password'); });
+    }).then(openApp).catch(function (err) { fail(err, m); $('pin').value = ''; });
+  });
+  function openApp() { $('pin').value = $('pin2').value = ''; $('loginMsg').textContent = ''; show('app'); render(); synced(); }
+  $('logout').addEventListener('click', function () { key = null; bookings = []; start(); });
+  $('refresh').addEventListener('click', function () {
+    $('sync').textContent = 'Refreshing...';
+    load().then(function (res) { file = res.data; sha = res.sha; return decryptAll(); }).then(function () { render(); synced(); }).catch(function (e) { fail(e, $('sync')); });
+  });
+  function synced() { $('sync').textContent = 'Saved on GitHub · checked ' + new Date().toLocaleTimeString('en-GB', { hour: 'numeric', minute: '2-digit', hour12: true }) + '. The website shows changes within about a minute.'; }
+
+  // ---------- cars ----------
+  R.cars.forEach(function (c) {
+    var b = document.createElement('button'); b.type = 'button'; b.dataset.id = c.id;
+    b.addEventListener('click', function () { car = c.id; selStart = selEnd = null; syncInputs(); render(); });
+    $('cars').appendChild(b);
+  });
+
+  // ---------- calendar ----------
+  function bookedOn(n) { return bookings.filter(function (b) { return b.car === car && n >= dnum(b.start) && n <= dnum(b.end); })[0]; }
+  function render() {
+    $('cars').querySelectorAll('button').forEach(function (b) {
+      var c = carObj(b.dataset.id), count = bookings.filter(function (x) { return x.car === c.id && x.end >= today; }).length;
+      b.innerHTML = esc(c.name) + '<i>' + count + '</i>'; b.setAttribute('aria-pressed', c.id === car);
+    });
+    var base = new Date(todayN * DAY), y = base.getUTCFullYear(), m = base.getUTCMonth() + monthOffset;
+    var first = Date.UTC(y, m, 1) / DAY, fd = new Date(first * DAY), days = new Date(Date.UTC(fd.getUTCFullYear(), fd.getUTCMonth() + 1, 0)).getUTCDate();
+    $('month').textContent = fd.toLocaleDateString('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+    $('prev').disabled = monthOffset <= 0; $('next').disabled = monthOffset >= 17;
+    var h = ''; ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'].forEach(function (d) { h += '<span class="dow">' + d + '</span>'; });
+    for (var i = 0; i < (fd.getUTCDay() + 6) % 7; i++) h += '<span class="day empty"></span>';
+    var a = selStart, z = selEnd !== null ? selEnd : a;
+    for (var d = 0; d < days; d++) {
+      var n = first + d, cls = 'day';
+      if (n < todayN) cls += ' past';
+      if (bookedOn(n)) cls += ' booked';
+      if (n === todayN) cls += ' today';
+      if (a !== null && (n === a || n === z)) cls += ' sel'; else if (a !== null && n > a && n < z) cls += ' in';
+      h += '<button type="button" class="' + cls + '" data-n="' + n + '">' + (d + 1) + '</button>';
+    }
+    $('days').innerHTML = h;
+    renderList(); estimate();
+  }
+  $('days').addEventListener('click', function (e) {
+    var b = e.target.closest('.day'); if (!b || !b.dataset.n) return;
+    var n = +b.dataset.n, bk = bookedOn(n);
+    if (bk) {
+      $('dayInfo').className = 'msg';
+      $('dayInfo').textContent = carObj(car).name + ': ' + nice(bk.start) + ' to ' + nice(bk.end) + (bk.customer ? ' · ' + bk.customer : '') + (bk.phone ? ' · ' + bk.phone : '');
+      return;
+    }
+    $('dayInfo').textContent = '';
+    if (n < todayN) return;
+    if (selStart === null || selEnd !== null || n < selStart) { selStart = n; selEnd = null; } else selEnd = n;
+    syncInputs(); render();
+  });
+  $('prev').addEventListener('click', function () { if (monthOffset > 0) { monthOffset--; render(); } });
+  $('next').addEventListener('click', function () { if (monthOffset < 17) { monthOffset++; render(); } });
+  function syncInputs() { $('start').value = selStart !== null ? dstr(selStart) : ''; $('end').value = selEnd !== null ? dstr(selEnd) : (selStart !== null ? dstr(selStart) : ''); }
+  ['start', 'end'].forEach(function (id) {
+    $(id).addEventListener('change', function () {
+      selStart = $('start').value ? dnum($('start').value) : null; selEnd = $('end').value ? dnum($('end').value) : null;
+      forceNext = false; $('save').textContent = 'Save booking'; render();
+    });
+  });
+  function estimate() {
+    var c = carObj(car), s = $('start').value, e = $('end').value || s;
+    if (!s || e < s) { $('est').hidden = true; return; }
+    var days = Math.max(1, dnum(e) - dnum(s)), rate = days >= 7 ? c.weekly : c.daily;
+    $('est').hidden = false;
+    $('est').innerHTML = esc(c.name) + ' · ' + days + ' day' + (days > 1 ? 's' : '') + ' × EC$' + rate + ' <b>EC$' + (days * rate) + '</b>';
+  }
+
+  // ---------- add ----------
+  function msg(kind, t) { $('addMsg').className = 'msg' + (kind ? ' ' + kind : ''); $('addMsg').textContent = t; }
+  $('addForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var s = $('start').value, en = $('end').value || s, thisCar = car;
+    if (!s) { msg('err', 'Choose the pick-up date'); return; }
+    if (en < s) { msg('err', 'The return date is before the pick-up date'); return; }
+    var details = { customer: $('customer').value.trim(), phone: $('phone').value.trim(), notes: $('notes').value.trim(), added: today };
+    var force = forceNext;
+    $('save').disabled = true; msg('', 'Saving...');
+    change(function (d) {
+      d.bookings = d.bookings || [];
+      var clash = d.bookings.filter(function (b) { return b.car === thisCar && b.start <= en && b.end >= s; })[0];
+      if (clash && !force) {
+        var who = bookings.filter(function (b) { return b.id === clash.id; })[0];
+        return { stop: true, clash: true, error: 'This car is already booked ' + nice(clash.start) + ' to ' + nice(clash.end) + (who && who.customer ? ' (' + who.customer + ')' : '') };
+      }
+      return seal(key, details).then(function (p) {
+        d.bookings.push({ id: b64(crypto.getRandomValues(new Uint8Array(6))).replace(/[+/=]/g, 'x'), car: thisCar, start: s, end: en, p: p });
+        d.bookings.sort(function (a, b) { return a.start < b.start ? -1 : a.start > b.start ? 1 : 0; });
+      });
+    }, 'Booking added: ' + thisCar + ' ' + s + ' to ' + en).then(function (r) {
+      $('save').disabled = false;
+      if (r.stop) { forceNext = true; $('save').textContent = 'Save anyway'; msg('err', r.error + '. Tap "Save anyway" to add it regardless.'); return; }
+      forceNext = false; $('save').textContent = 'Save booking'; $('dayInfo').textContent = '';
+      selStart = selEnd = null; syncInputs();
+      ['customer', 'phone', 'notes'].forEach(function (id) { $(id).value = ''; });
+      msg('ok', 'Saved. The website calendar will show ' + nice(s) + ' to ' + nice(en) + ' as booked within about a minute.');
+      render(); synced();
+    }).catch(function (err) { $('save').disabled = false; fail(err, $('addMsg')); });
+  });
+
+  // ---------- list and delete ----------
+  $('filter').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    filter = b.dataset.f; $('filter').querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x === b); }); renderList();
+  });
+  function renderList() {
+    var list = bookings.filter(function (b) { return b.end >= today && (filter === 'all' || b.car === car); })
+      .sort(function (a, b) { return a.start < b.start ? -1 : a.start > b.start ? 1 : 0; });
+    if (!list.length) { $('items').innerHTML = '<p class="empty-list">No upcoming bookings' + (filter === 'car' ? ' for this car' : '') + '.</p>'; return; }
+    $('items').innerHTML = list.map(function (b) {
+      var c = carObj(b.car) || { name: b.car };
+      return '<div class="item"><span class="tag ' + esc(b.car) + '">' + esc(c.name.split(' ')[1] || c.name) + '</span><div><b>' + nice(b.start) + ' to ' + nice(b.end) + '</b><small>' +
+        esc([b.customer, b.phone, b.notes].filter(Boolean).join(' · ') || 'No details') + '</small></div><button type="button" class="del" data-id="' + esc(b.id) + '">Delete</button></div>';
+    }).join('');
+  }
+  $('items').addEventListener('click', function (e) {
+    var b = e.target.closest('.del'); if (!b) return;
+    if (delArm !== b.dataset.id) {
+      delArm = b.dataset.id; $('items').querySelectorAll('.del').forEach(function (x) { x.classList.remove('sure'); x.textContent = 'Delete'; });
+      b.classList.add('sure'); b.textContent = 'Tap to confirm'; return;
+    }
+    var id = b.dataset.id, gone = bookings.filter(function (x) { return x.id === id; })[0];
+    b.disabled = true; b.textContent = 'Deleting...';
+    change(function (d) { d.bookings = (d.bookings || []).filter(function (x) { return x.id !== id; }); },
+      'Booking removed: ' + (gone ? gone.car + ' ' + gone.start + ' to ' + gone.end : id))
+      .then(function () { delArm = null; render(); synced(); })
+      .catch(function (err) { delArm = null; b.disabled = false; b.textContent = 'Delete'; fail(err, $('sync')); });
+  });
+
+  // ---------- change password: re-locks every booking's details with the new password ----------
+  $('pinForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var p1 = $('newPin').value.trim(), p2 = $('newPin2').value.trim(), m = $('pinMsg');
+    if (p1.length < 8) { m.className = 'msg err'; m.textContent = 'Use at least 8 characters'; return; }
+    if (p1 !== p2) { m.className = 'msg err'; m.textContent = 'The two passwords are different'; return; }
+    m.className = 'msg'; m.textContent = 'Changing...';
+    var salt = b64(crypto.getRandomValues(new Uint8Array(16))), oldKey = key, newKey;
+    deriveKey(p1, salt).then(function (k) {
+      newKey = k;
+      return change(function (d) {
+        return Promise.all((d.bookings || []).map(function (b) {
+          if (!b.p) return b;
+          return unseal(oldKey, b.p).then(function (x) { return seal(newKey, x); }).then(function (p) { b.p = p; return b; });
+        })).then(function () { d.salt = salt; return seal(newKey, { ok: 'wjr' }).then(function (c) { d.check = c; key = newKey; }); });
+      }, 'Bookings password changed');
+    }).then(function () { $('newPin').value = $('newPin2').value = ''; m.className = 'msg ok'; m.textContent = 'Password changed. Use the new password from now on.'; })
+      .catch(function (err) { key = oldKey; fail(err, m); });
+  });
+
+  if (!window.crypto || !crypto.subtle) { show('setup'); $('setupMsg').className = 'msg err'; $('setupMsg').textContent = 'This browser cannot open the bookings page. Use Chrome, Safari or Edge on the website address.'; return; }
+  start();
+})();
+</script>
+</body>
+</html>

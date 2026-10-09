@@ -9,7 +9,11 @@ Live at: https://projects473.github.io/wjrdemo2/
 - `index.html`: the page
 - `css/styles.css`: all styling. Brand colours are set at the top: Peach `#FFD3AC`, Sky `#97CCF6` and Charcoal `#1E2328`. The hero animation (photo slideshow, rising GRENADA lettering and the Toyota Noah with the WJR logo driving past palm trees by day, and under the moon, stars and street lamps with its headlights on in the charcoal version) is in the Hero section and switches off for visitors who turn on reduced motion. Fonts: Bebas Neue (headings), Kaushan Script (small labels) and Plus Jakarta Sans (text), loaded from Google Fonts.
 - `js/fares.js`: WJR's taxi rates (116 destinations from 6 pickup areas), used by the rate shown in the booking panel. Edit prices here.
-- `js/main.js`: booking tabs, the rate shown in the booking bar, destination cards (their rates are read from `fares.js`), WhatsApp booking messages, the photo strip and mobile menu
+- `js/rentals.js`: rental rates (daily and weekly) and where the bookings file lives on GitHub
+- `admin.html`: Wayne's private bookings page (access key and password, not listed on Google)
+- `data/bookings.json`: the rental bookings Wayne manages on `admin.html` (customer details are encrypted)
+- `SETUP-BOOKINGS.md`: how to connect the bookings page
+- `js/main.js`: booking tabs, taxi price rules, rental totals, the availability calendar, destination cards (their rates are read from `fares.js`), WhatsApp booking messages, the photo strip and mobile menu
 - `assets/`: WJR logo, favicon and phone home-screen icon
 - `files/WJR-Rental-Agreement.pdf`: the rental agreement linked from the rental terms
 - `robots.txt`, `sitemap.xml`: help Google find and index the site
@@ -34,10 +38,27 @@ Open `js/fares.js`. Each line is one destination, for example:
 
 The six pairs are `[EC$, US$]` from each pickup area, in this order: Umbrellas / IGA / Wall St. / Coyaba / Siesta, Secret Harbour, Mahogany Run / BBC Beach, Lavo Lanes / Calliste, MBIA airport / Royalton, St. George's. Use `0` when the destination is in that same area and `null` when there is no fare yet.
 
+These are the rates for 1 to 2 passengers. The website adds two charges automatically:
+
+- **Airport pickup:** EC$10 when the trip starts at MBIA airport. Trips to the airport, and pickups at Royalton, use the listed rate.
+- **Extra passengers:** EC$10 for each passenger above 2 (3 passengers +EC$10, 4 passengers +EC$20, and so on).
+
+When a charge is added, the US$ price is worked out from the new EC$ price the same way as the list (EC$60 = US$25, otherwise 40% of the EC$ price). The charges are set at the top of the taxi section in `js/main.js` (`AIRPORT_FEE`, `EXTRA_PAX_FEE`, `PAX_INCLUDED`).
+
+## Rental rates and the availability calendar
+
+Open `js/rentals.js`.
+
+- `daily` is the price per day for rentals of less than 7 days; `weekly` is the price per day for 7 days or more. A rental's length is counted from the pick-up date to the return date (same-day returns count as 1 day).
+- Booked dates are managed on `admin.html`. Wayne logs in, taps the dates, and the booking is saved to `data/bookings.json` in this repository. The calendar reads that file, so the dates show within about a minute. See `SETUP-BOOKINGS.md` to connect it.
+- `data/bookings.json` starts with example bookings for the demo. Delete them on the bookings page before launch.
+- Visitors choose dates and send the request on WhatsApp. WJR confirms on WhatsApp, then adds the booking on the bookings page.
+
 ## Before launch
 
 - Vehicle photos show the same models and colours as WJR's cars. Swap in photos of WJR's own vehicles when available.
-- Add daily rental rates and tour prices when confirmed.
+- Connect the bookings page (`SETUP-BOOKINGS.md`) and delete the example bookings.
+- Add tour prices when confirmed.
 - The map is pinned to WJR's Google Maps listing (12.051823, -61.7259606) and the "Open in Google Maps" button uses https://maps.app.goo.gl/k7Sct81pZx5L4zoy9.
 - Add Google Search Console and submit `sitemap.xml`.
 

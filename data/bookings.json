@@ -1,0 +1,54 @@
+{
+  "note": "Rental bookings for the website calendar. Managed on admin.html. Customer details are encrypted.",
+  "bookings": [
+    {
+      "id": "example3",
+      "car": "raize",
+      "start": "2026-10-10",
+      "end": "2026-10-11",
+      "example": true
+    },
+    {
+      "id": "example1",
+      "car": "ignis",
+      "start": "2026-10-12",
+      "end": "2026-10-15",
+      "example": true
+    },
+    {
+      "id": "example6",
+      "car": "vezel",
+      "start": "2026-10-14",
+      "end": "2026-10-20",
+      "example": true
+    },
+    {
+      "id": "example4",
+      "car": "raize",
+      "start": "2026-10-18",
+      "end": "2026-10-22",
+      "example": true
+    },
+    {
+      "id": "example2",
+      "car": "ignis",
+      "start": "2026-10-24",
+      "end": "2026-10-31",
+      "example": true
+    },
+    {
+      "id": "example7",
+      "car": "vezel",
+      "start": "2026-11-02",
+      "end": "2026-11-06",
+      "example": true
+    },
+    {
+      "id": "example5",
+      "car": "raize",
+      "start": "2026-11-05",
+      "end": "2026-11-09",
+      "example": true
+    }
+  ]
+}
