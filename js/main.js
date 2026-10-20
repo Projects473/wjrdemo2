@@ -237,6 +237,7 @@
     var upd = function () {
       var max = tl.scrollWidth - tl.clientWidth - 2;
       pv.disabled = tl.scrollLeft <= 2; nx.disabled = tl.scrollLeft >= max;
+      pv.parentNode.style.visibility = max > 0 ? '' : 'hidden';
     };
     pv.addEventListener('click', function () { tl.scrollBy({ left: -stepT(), behavior: 'smooth' }); });
     nx.addEventListener('click', function () { tl.scrollBy({ left: stepT(), behavior: 'smooth' }); });
