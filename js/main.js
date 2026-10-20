@@ -5,7 +5,7 @@
   var tabs = document.querySelectorAll('[data-tab]');
   function showTab(name) {
     tabs.forEach(function (t) { var on = t.dataset.tab === name; t.setAttribute('aria-selected', on); $(t.getAttribute('aria-controls')).hidden = !on; });
-    $('fareOut').hidden = name === 'tours';
+    $('fareOut').hidden = false;
     currentTab = name; if (typeof updateFareOut === 'function' && fromSel) updateFareOut();
   }
   tabs.forEach(function (t) { t.addEventListener('click', function () { showTab(t.dataset.tab); }); });
@@ -56,6 +56,7 @@
   function updateFareOut() {
     var out = $('fareOut');
     if (currentTab === 'rentals') { updateRentalOut(); return; }
+    if (currentTab === 'tours') { updateTourOut(); return; }
     if (toSel.value === '') { out.textContent = 'Choose where you are going to see the rate'; return; }
     var q = quote(+fromSel.value, +toSel.value, +paxSel.value);
     if (q.ec) out.innerHTML = '<span>Your rate</span><b>EC$' + q.ec + '</b><em>US$' + q.us + '</em>';
@@ -66,13 +67,25 @@
   document.querySelectorAll('[data-dest]').forEach(function (card) {
     var i = rowIndex(card.dataset.dest); if (i < 0) return;
     var q = quote(AIRPORT, i, 2);
-    card.querySelector('.r').innerHTML = F.rows[i][1] + ' · ' + (q.ec ? '<b>EC$' + q.ec + '</b> / US$' + q.us : 'Ask for the rate');
+    card.querySelector('.r').textContent = F.rows[i][1];
     card.addEventListener('click', function () {
       showTab('taxi'); fromSel.value = AIRPORT; toSel.value = i; updateFareOut();
       $('book').scrollIntoView({ behavior: 'smooth' });
     });
   });
   $('destCount').textContent = F.rows.length;
+
+  // ---------- Tour prices: half day or whole day for 1 to 2 people, plus EC$26 / US$10 per extra person ----------
+  var TOUR = { half: { label: 'Half day (4 hours)', ec: 370, us: 140 }, full: { label: 'Whole day (7 hours)', ec: 650, us: 245 }, extraEc: 26, extraUs: 10, included: 2 };
+  function tourQuote() {
+        var len = TOUR[$('toLen').value], extra = Math.max(0, +$('toGuests').value - TOUR.included);
+    return { ec: len.ec + extra * TOUR.extraEc, us: len.us + extra * TOUR.extraUs, len: len };
+  }
+  function updateTourOut() {
+    var out = $('fareOut'), q = tourQuote();
+    out.innerHTML = '<span>Tour price</span><b>EC$' + q.ec + '</b><em>US$' + q.us + '</em>';
+  }
+  ['toTour', 'toLen', 'toGuests'].forEach(function (id) { $(id).addEventListener('change', updateFareOut); });
 
   // ---------- Rentals: rates, booked dates and calendar ----------
   var R = window.WJR_RENTALS, DAY = 86400000;
@@ -217,6 +230,20 @@
   $('prev').addEventListener('click', function () { sc.scrollBy({ left: -step(), behavior: 'smooth' }); });
   $('next').addEventListener('click', function () { sc.scrollBy({ left: step(), behavior: 'smooth' }); });
 
+  (function () {
+    var tl = $('tourList'); if (!tl) return;
+    var cards = tl.querySelectorAll('.tour'), pv = $('tPrev'), nx = $('tNext');
+    var stepT = function () { return cards[0].getBoundingClientRect().width + parseFloat(getComputedStyle(tl).columnGap || 24); };
+    var upd = function () {
+      var max = tl.scrollWidth - tl.clientWidth - 2;
+      pv.disabled = tl.scrollLeft <= 2; nx.disabled = tl.scrollLeft >= max;
+    };
+    pv.addEventListener('click', function () { tl.scrollBy({ left: -stepT(), behavior: 'smooth' }); });
+    nx.addEventListener('click', function () { tl.scrollBy({ left: stepT(), behavior: 'smooth' }); });
+    tl.addEventListener('scroll', function () { window.requestAnimationFrame(upd); }, { passive: true });
+    window.addEventListener('resize', upd); upd();
+  })();
+
   $('booker').addEventListener('submit', function (e) {
     e.preventDefault();
     var tab = document.querySelector('[data-tab][aria-selected="true"]').dataset.tab, lines;
@@ -233,7 +260,9 @@
       if (toSel.value !== '') { var q = quote(+fromSel.value, +toSel.value, +paxSel.value); lines.push('Rate shown: ' + quoteText(q)); }
       lines.push('Pickup: ' + when('txWhen'));
     } else if (tab === 'tours') {
-      lines = ['Hello WJR Taxi Tours & Auto Rentals, I would like to ask about a tour.', 'Tour: ' + v('toTour'), 'Date: ' + when('toDate'), 'Pickup from: ' + v('toPickup'), 'Guests: ' + v('toGuests')];
+      var tq = tourQuote();
+      lines = ['Hello WJR Taxi Tours & Auto Rentals, I would like to book a tour.', 'Tour: ' + v('toTour'), 'Length: ' + TOUR[$('toLen').value].label, 'Date: ' + when('toDate'), 'Pickup from: ' + v('toPickup'), 'Guests: ' + $('toGuests').value];
+      if (tq) lines.push('Price shown: EC$' + tq.ec + ' / US$' + tq.us);
     } else {
       lines = ['Hello WJR Taxi Tours & Auto Rentals, I would like to rent a car.', 'Vehicle: ' + v('reCar'), 'Pick-up date: ' + when('reStart'), 'Return date: ' + when('reEnd'), 'Pickup location: ' + v('rePlace')];
       var rc = carByOption($('reCar').value);
@@ -248,7 +277,7 @@
     b.addEventListener('click', function () { $('reCar').value = b.dataset.car; showTab('rentals'); $('book').scrollIntoView({ behavior: 'smooth' }); });
   });
   document.querySelectorAll('[data-tour]').forEach(function (a) {
-    a.addEventListener('click', function () { showTab('tours'); $('toTour').value = a.dataset.tour; });
+    a.addEventListener('click', function () { $('toTour').value = a.dataset.tour; showTab('tours'); });
   });
 
   var now = new Date(); now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
@@ -301,8 +330,16 @@
   menuBtn.addEventListener('click', function () { var o = links.classList.toggle('open'); menuBtn.setAttribute('aria-expanded', o); });
   links.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', function () { links.classList.remove('open'); menuBtn.setAttribute('aria-expanded', 'false'); }); });
 
-  if ('IntersectionObserver' in window) {
-    var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }); }, { threshold: .12 });
-    document.querySelectorAll('.rv').forEach(function (el, i) { el.style.transitionDelay = (i % 4) * 80 + 'ms'; io.observe(el); });
-  } else document.querySelectorAll('.rv').forEach(function (el) { el.classList.add('in'); });
+  /* Reveal on scroll. Content is visible by default; it is only hidden once this script runs,
+     and a scroll check backs up the observer so nothing can stay hidden (e.g. inside previews or iframes). */
+  var rvs = Array.prototype.slice.call(document.querySelectorAll('.rv'));
+  if ('IntersectionObserver' in window && rvs.length) {
+    var show = function (el) { el.classList.add('in'); };
+    var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { show(e.target); io.unobserve(e.target); } }); }, { threshold: .05 });
+    rvs.forEach(function (el, i) { el.style.transitionDelay = (i % 3) * 80 + 'ms'; io.observe(el); });
+    var check = function () { var vh = window.innerHeight || document.documentElement.clientHeight; rvs.forEach(function (el) { if (!el.classList.contains('in') && el.getBoundingClientRect().top < vh * 0.95) show(el); }); };
+    window.addEventListener('scroll', check, { passive: true }); window.addEventListener('resize', check); window.addEventListener('load', check);
+    setTimeout(check, 300);
+    setTimeout(function () { rvs.forEach(show); }, 4000);
+  }
 })();

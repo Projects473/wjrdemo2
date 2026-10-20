@@ -83,7 +83,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Kaushan+Script&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/styles.css">
-<script>(function(){var t=null;try{t=new URLSearchParams(location.search).get('theme')||localStorage.getItem('wjr-theme')}catch(e){}if(t==='dark')document.documentElement.removeAttribute('data-theme')})();</script>
+<script>(function(){var t=null;try{t=new URLSearchParams(location.search).get('theme')||localStorage.getItem('wjr-theme')}catch(e){}if(t==='dark')document.documentElement.removeAttribute('data-theme');var d=document.documentElement;if('IntersectionObserver' in window){d.classList.add('js-rv');setTimeout(function(){d.classList.add('rv-all')},5000)}})();</script>
 </head>
 <body>
 
@@ -167,11 +167,12 @@
             <button class="btn" type="submit">Book this ride</button>
           </div>
           <div class="fields" id="p-tours" role="tabpanel" hidden>
-            <div class="field has-select"><label for="toTour">Tour</label><select id="toTour"><option>Waterfalls and Rainforest</option><option>North Coast Heritage</option><option>Capital and Coast</option><option>Custom tour</option></select></div>
+            <div class="field has-select"><label for="toTour">Tour</label><select id="toTour"><option>Garden of Eden</option><option>Waterfalls</option><option>St. George&#39;s</option><option>Chocolate Rum</option><option>Round de Island</option></select></div>
+            <div class="field has-select"><label for="toLen">Length</label><select id="toLen"><option value="half">Half day, 4 hrs</option><option value="full">Whole day, 7 hrs</option></select></div>
             <div class="field date-field"><label for="toDate">Tour date</label><input id="toDate" type="date"><span class="ph" aria-hidden="true">Select a date</span></div>
             <div class="field"><label for="toPickup">Pickup from</label><input id="toPickup" type="text" placeholder="Hotel or cruise port"></div>
-            <div class="field"><label for="toGuests">Guests</label><input id="toGuests" type="text" placeholder="4 guests"></div>
-            <button class="btn" type="submit">Ask about a tour</button>
+            <div class="field has-select"><label for="toGuests">Guests</label><select id="toGuests"><option value="1">1 person</option><option value="2" selected>2 people</option><option value="3">3 people</option><option value="4">4 people</option><option value="5">5 people</option><option value="6">6 people</option><option value="7">7 people</option><option value="8">8 people</option><option value="9">9 people</option><option value="10">10 people</option></select></div>
+            <button class="btn" type="submit">Book this tour</button>
           </div>
           <div class="fields" id="p-rentals" role="tabpanel" hidden>
             <div class="field has-select"><label for="reCar">Vehicle</label><select id="reCar"><option>Any available car</option><option>Suzuki Ignis Hybrid (4 seats)</option><option>Toyota Raize Hybrid (5 seats)</option><option>Honda Vezel Hybrid (5 seats)</option></select></div>
@@ -192,7 +193,7 @@
       <div class="head-row rv">
         <h2 class="h2"><span class="label">Destinations</span>Where will <span class="o">you</span> go<br><span class="sky">next?</span></h2>
         <div style="display:flex;gap:30px;align-items:flex-end">
-          <p>Rates from Maurice Bishop International Airport for 1 to 2 passengers, including the EC$10 airport pickup. Each extra passenger adds EC$10. Tap a place to load it into the booking bar.</p>
+          <p>Popular trips from Maurice Bishop International Airport. Tap a place to see your rate in the booking bar.</p>
           <div class="arrows"><button type="button" id="prev" aria-label="Previous"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button><button type="button" id="next" aria-label="Next"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
         </div>
       </div>
@@ -212,7 +213,7 @@
     <div class="wrap about">
       <div class="stack rv">
         <figure class="f1"><img src="https://images.unsplash.com/photo-1601771281064-e9340d2cb2b3?auto=format&fit=crop&w=800&q=70" alt="Cruise ships docked beside St. George's" loading="lazy"></figure>
-        <figure class="f2"><img src="https://images.unsplash.com/photo-1633000953180-9336549ffb64?auto=format&fit=crop&w=800&q=70" alt="Cars parked in front of a yellow building in Grenada" loading="lazy"></figure>
+        <figure class="f2"><img src="assets/river-tubing.jpg" alt="River tubing through the rainforest in Grenada" style="object-position:42% 50%" loading="lazy"></figure>
         <div class="stamp"><b id="destCount">116</b><span>destinations<br>with set rates</span></div>
       </div>
       <div class="rv">
@@ -234,32 +235,52 @@
     <div class="wrap">
       <div class="center rv">
         <h2 class="h2"><span class="label">Island tours</span>Popular <span class="sky">island tours</span></h2>
-        <p class="lede">Private tours with a WJR Taxi Tours &amp; Auto Rentals driver. Waterfalls, rum, heritage and the capital, at your pace.</p>
+        <p class="lede">Private tours with a WJR Taxi Tours &amp; Auto Rentals driver. Gardens, waterfalls, rum, chocolate and the capital, at your pace.</p>
       </div>
-      <div class="tours">
-        <article class="tour glass rv">
-          <p class="ttl">Rainforest</p>
+      <div class="tours" id="tourList" aria-label="Island tours, scroll sideways for more">
+        <article class="tour glass">
+          <p class="ttl">Garden of Eden</p>
+          <div class="pic"><img src="assets/tower-estate.jpg" alt="The Tower Estate great house, St. Paul's, Grenada" loading="lazy"></div>
+          <h3>Gardens and plantations</h3>
+          <div class="meta"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Mt. Parnassus Plantation, Laura Herb and Spice Garden, Buttercup Gardens, The Tower</div>
+          <div class="row"><span>From EC$370 / US$140</span><a class="btn btn-sm" href="#book" data-tour="Garden of Eden">Book</a></div>
+        </article>
+        <article class="tour glass">
+          <p class="ttl">Waterfalls</p>
           <div class="pic"><img src="https://images.unsplash.com/photo-1709348369040-c83f3f9e4a5d?auto=format&fit=crop&w=800&q=70" alt="Waterfall in the rainforest" loading="lazy"></div>
-          <h3>Waterfalls and Rainforest</h3>
-          <div class="meta"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Grand Etang Lake, Annandale Falls, Concord Falls</div>
-          <div class="row"><span>Price on request</span><a class="btn btn-sm" href="#book" data-tour="Waterfalls and Rainforest">Ask</a></div>
+          <h3>Falls of the interior</h3>
+          <div class="meta"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Annandale, Concord, Seven Sisters, Royal Mt. Carmel</div>
+          <div class="row"><span>From EC$370 / US$140</span><a class="btn btn-sm" href="#book" data-tour="Waterfalls">Book</a></div>
         </article>
-        <article class="tour glass rv">
-          <p class="ttl">North Coast</p>
-          <div class="pic"><img src="https://images.unsplash.com/photo-1605692501585-c9aadd8ccb7a?auto=format&fit=crop&w=800&q=70" alt="Rocky headland above the sea" loading="lazy"></div>
-          <h3>North Coast Heritage</h3>
-          <div class="meta"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Belmont Estate, River Antoine Rum Distillery, Sauteurs</div>
-          <div class="row"><span>Price on request</span><a class="btn btn-sm" href="#book" data-tour="North Coast Heritage">Ask</a></div>
+        <article class="tour glass">
+          <p class="ttl">St. George&#39;s</p>
+          <div class="pic"><img src="assets/st-georges.jpg" alt="The Carenage, St. George&#39;s, at sunset" loading="lazy"></div>
+          <h3>The capital and Grand Anse</h3>
+          <div class="meta"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Grand Anse Beach, House of Chocolate, Spice Market, Fort George</div>
+          <div class="row"><span>From EC$370 / US$140</span><a class="btn btn-sm" href="#book" data-tour="St. George&#39;s">Book</a></div>
         </article>
-        <article class="tour glass rv">
-          <p class="ttl">The Capital</p>
-          <div class="pic"><img src="https://images.unsplash.com/photo-1752414450622-4ac153d96add?auto=format&fit=crop&w=800&q=70" alt="Aerial view of a waterfront town" loading="lazy"></div>
-          <h3>Capital and Coast</h3>
-          <div class="meta"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Fort George, the Spice Market, Grand Anse Beach</div>
-          <div class="row"><span>Price on request</span><a class="btn btn-sm" href="#book" data-tour="Capital and Coast">Ask</a></div>
+        <article class="tour glass">
+          <p class="ttl">Chocolate Rum</p>
+          <div class="pic"><img src="https://upload.wikimedia.org/wikipedia/commons/b/b3/Fort_Frederick%2C_Grenada_%2840001365693%29.jpg" alt="Fort Frederick on Richmond Hill above St. George&#39;s" title="Fort Frederick. Photo: David Stanley, CC BY 2.0" style="object-position:50% 40%" loading="lazy"></div>
+          <h3>Rum, forts and chocolate</h3>
+          <div class="meta"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Clarke&#39;s Court Rum Distillery, Fort Frederick, House of Chocolate (St. George&#39;s)</div>
+          <div class="row"><span>From EC$370 / US$140</span><a class="btn btn-sm" href="#book" data-tour="Chocolate Rum">Book</a></div>
+        </article>
+        <article class="tour glass">
+          <p class="ttl">Round de Island</p>
+          <div class="pic"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Grand_Etang_Lake.jpg/1280px-Grand_Etang_Lake.jpg" alt="Rainforest and Grand Etang Lake, Grenada" title="Grand Etang. Photo: Jerzy Bereszko, CC BY-SA 4.0" style="object-position:50% 55%" loading="lazy"></div>
+          <h3>Rum, chocolate and rainforest</h3>
+          <div class="meta"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Clarke&#39;s Court Rum Distillery, Tri-Island Chocolate Factory (make your own chocolate), Grand Etang Rain Forest</div>
+          <div class="row"><span>From EC$370 / US$140</span><a class="btn btn-sm" href="#book" data-tour="Round de Island">Book</a></div>
         </article>
       </div>
-      <div class="center-btn"><a class="btn btn-peach" href="#book" data-tour="Custom tour">Plan a custom tour</a></div>
+      <div class="tour-nav"><div class="arrows"><button type="button" id="tPrev" aria-label="Previous tours"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button><button type="button" id="tNext" aria-label="Next tours"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div></div>
+      <div class="tour-prices rv">
+        <div><b>Half day</b><span>4 hours</span><strong>EC$370 <em>/ US$140</em></strong></div>
+        <div><b>Whole day</b><span>7 hours</span><strong>EC$650 <em>/ US$245</em></strong></div>
+        <p>Prices are for 1 to 2 people. Each additional person is EC$26 / US$10. Every tour can be booked as a half day or a whole day.</p>
+      </div>
+      <div class="center-btn"><a class="survey" href="https://forms.office.com/r/e2x5VSHUy5" target="_blank" rel="noopener">Been on a tour with us? Share your feedback</a></div>
     </div>
   </section>
 
@@ -404,7 +425,7 @@
       </div>
       <div class="f-col">
         <h4>Quick links</h4>
-        <ul><li><a href="#destinations">Destinations</a></li><li><a href="#tours">Island tours</a></li><li><a href="#rentals">Car rentals</a></li><li><a href="#faq">Rental terms</a></li><li><a href="#contact">Contact</a></li></ul>
+        <ul><li><a href="#destinations">Destinations</a></li><li><a href="#tours">Island tours</a></li><li><a href="#rentals">Car rentals</a></li><li><a href="#faq">Rental terms</a></li><li><a href="#contact">Contact</a></li><li><a href="https://forms.office.com/r/e2x5VSHUy5" target="_blank" rel="noopener">Tour feedback survey</a></li></ul>
       </div>
     </div>
     <div class="f-bottom">

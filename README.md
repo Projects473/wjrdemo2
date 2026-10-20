@@ -55,11 +55,14 @@ Open `js/rentals.js`.
 - `data/bookings.json` starts with example bookings for the demo. Delete them on the bookings page before launch.
 - Visitors choose dates and send the request on WhatsApp. WJR confirms on WhatsApp, then adds the booking on the bookings page with the customer's email (required). The customer gets a confirmation email (see `SETUP-EMAIL.md`).
 
+## Tours
+
+The six tours and their prices are in `index.html` (the Island tours section and the Tour list in the booking bar). Tour prices are set at the top of the tour section in `js/main.js` (`TOUR`): half day (4 hours) EC$370 / US$140, whole day (7 hours) EC$650 / US$245, for 1 to 2 people, plus EC$26 / US$10 for each additional person. The post-tour feedback survey is linked under the tours.
+
 ## Before launch
 
 - Vehicle photos show the same models and colours as WJR's cars. Swap in photos of WJR's own vehicles when available.
 - Connect the bookings page (`SETUP-BOOKINGS.md`) and delete the example bookings.
-- Add tour prices when confirmed.
 - The map is pinned to WJR's Google Maps listing (12.051823, -61.7259606) and the "Open in Google Maps" button uses https://maps.app.goo.gl/k7Sct81pZx5L4zoy9.
 - Add Google Search Console and submit `sitemap.xml`.
 
@@ -72,3 +75,8 @@ Vehicle photos are loaded from Wikimedia Commons. Their licences require credit 
 - Suzuki Ignis: Vauxford, CC BY-SA 4.0
 - Toyota Raize Hybrid: Tokumeigakarinoaoshima, CC BY-SA 4.0
 - Honda Vezel (HR-V): RL GNZLZ, CC BY-SA 2.0
+- The Tower Estate (Garden of Eden tour): photo supplied by WJR Taxi Tours & Auto Rentals, stored in `assets/tower-estate.jpg`
+- River tubing (About section): photo supplied by WJR Taxi Tours & Auto Rentals, stored in `assets/river-tubing.jpg`
+- The Carenage, St. George's (St. George's tour): photo supplied by WJR Taxi Tours & Auto Rentals, stored in `assets/st-georges.jpg`
+- Fort Frederick (Chocolate Rum tour): David Stanley, CC BY 2.0, via Wikimedia Commons
+- Grand Etang Lake (Round de Island tour): Jerzy Bereszko, CC BY-SA 4.0, via Wikimedia Commons
