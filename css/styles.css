@@ -537,6 +537,68 @@ html[data-theme="light"] .sky-night,html[data-theme="light"] .taxi .beam,html[da
   .js-rv .rv{opacity:1;transform:none}
 }
 
+/* Links to the detail pages */
+.more-link{text-align:center;margin:26px 0 0;font-weight:700}
+.more-link a,.more-link-a,.inline-link{color:var(--txt);text-underline-offset:4px;font-weight:700}
+.more-link-a{display:block;font-size:15px;margin-bottom:6px}
+/* FAQ */
+.faq{max-width:880px;margin:48px auto 0;display:grid;gap:14px}
+.faq-item{padding:0;overflow:hidden}
+.faq-item summary{cursor:pointer;list-style:none;padding:20px 56px 20px 24px;position:relative}
+.faq-item summary::-webkit-details-marker{display:none}
+.faq-item summary::after{content:"+";position:absolute;right:22px;top:50%;transform:translateY(-50%);font:400 30px/1 var(--head);color:var(--sky)}
+html[data-theme="light"] .faq-item summary::after{color:var(--sky-t)}
+.faq-item[open] summary::after{content:"\2212"}
+.faq-item h3{margin:0;font-size:17px;font-weight:800;line-height:1.35}
+.faq-item p{margin:0;padding:0 24px 22px;color:var(--mute)}
+
+/* Detail pages: airport taxi, island tours, car rental */
+.page-hero{position:relative;isolation:isolate;padding:200px 0 100px;color:#fff;text-align:center;overflow:hidden}
+.page-hero .bgimg{position:absolute;inset:0;z-index:-2;background-size:cover;background-position:center}
+.page-hero::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(30,35,40,.72) 0%,rgba(30,35,40,.5) 55%,rgba(30,35,40,.82) 100%)}
+.page-hero h1{font-family:var(--head);font-weight:400;font-size:clamp(52px,8vw,112px);line-height:.9;letter-spacing:.01em;margin:0;text-transform:uppercase}
+.page-hero h1 span{color:var(--peach)}
+.page-hero .intro{max-width:660px;margin:20px auto 0;color:#eef2f5;font-size:17.5px}
+.page-hero .ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:30px}
+.crumbs{margin:0 0 20px;font-size:12.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#eef2f5}
+.crumbs ol{list-style:none;margin:0;padding:0;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.crumbs li+li::before{content:"/";margin-right:10px;opacity:.6}
+.crumbs a{color:inherit;text-underline-offset:3px}
+.page-sec{padding:90px 0}
+.page-sec+.page-sec{padding-top:0}
+.page-sec .h2{font-size:clamp(38px,4.6vw,64px)}
+.page-sec .sub{color:var(--mute);max-width:720px;margin:14px 0 0}
+.page-sec.center .sub{margin:14px auto 0}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:36px}
+.step{padding:26px}
+.step b{display:block;font-family:var(--head);font-weight:400;font-size:46px;line-height:1;color:var(--sky)}
+html[data-theme="light"] .step b{color:var(--sky-t)}
+.step h3,.feature h3{font-family:var(--head);font-weight:400;font-size:26px;letter-spacing:.03em;margin:8px 0 6px}
+.step p,.feature p,.feature li{margin:0;color:var(--mute)}
+.feature ul{margin:0;padding-left:18px}
+.rate-wrap{overflow-x:auto;margin-top:30px;padding:8px 6px}
+.rate-table{width:100%;border-collapse:collapse;font-size:15px;min-width:460px}
+.rate-table caption{text-align:left;color:var(--mute);font-size:14px;padding:0 16px 10px}
+.rate-table th,.rate-table td{text-align:left;padding:11px 16px;border-bottom:1px solid var(--line)}
+.rate-table thead th{font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--mute)}
+.rate-table .num{text-align:right;font-weight:800;white-space:nowrap}
+.rate-table tr.parish th{font-family:var(--head);font-weight:400;font-size:24px;letter-spacing:.03em;padding-top:26px;color:var(--sky)}
+html[data-theme="light"] .rate-table tr.parish th{color:var(--sky-t)}
+.rate-table .ask{color:var(--mute);font-weight:600}
+.trip{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:30px;padding:24px;align-items:center;margin-top:22px}
+.trip img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:14px;display:block}
+.trip h2,.trip h3.t{font-family:var(--head);font-weight:400;font-size:clamp(32px,3.4vw,44px);letter-spacing:.02em;line-height:1;margin:0 0 6px;color:var(--sky)}
+html[data-theme="light"] .trip h2,html[data-theme="light"] .trip h3.t{color:var(--sky-t)}
+.trip .tag{font-weight:800;margin:0 0 12px}
+.trip ul{margin:0 0 18px;padding-left:18px;color:var(--mute)}
+.trip .price{font-weight:800;margin:0 0 16px}
+.feature-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:34px}
+.feature{padding:26px}
+.cta-band{text-align:center;padding:70px 0 100px}
+.cta-band .ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:26px}
+html[data-theme="light"] .cta-band .btn-ghost,html[data-theme="light"] .page-sec .btn-ghost{color:var(--ink);box-shadow:inset 0 0 0 1.5px rgba(30,35,40,.35)}
+@media (max-width:860px){.steps,.feature-grid{grid-template-columns:1fr}.trip{grid-template-columns:1fr}.page-hero{padding:170px 0 80px}}
+
 /* Language translator (Google Translate, with its own toolbar hidden) */
 .lang{position:relative;flex:none}
 .lang-btn{height:42px;padding:0 11px;border-radius:4px;border:0;cursor:pointer;background:var(--ink);color:#fff;display:flex;align-items:center;gap:6px;font:800 13px/1 var(--sans);letter-spacing:.04em}
