@@ -80,3 +80,11 @@ Vehicle photos are loaded from Wikimedia Commons. Their licences require credit 
 - The Carenage, St. George's (St. George's tour): photo supplied by WJR Taxi Tours & Auto Rentals, stored in `assets/st-georges.jpg`
 - Fort Frederick (Chocolate Rum tour): David Stanley, CC BY 2.0, via Wikimedia Commons
 - Grand Etang Lake (Round de Island tour): Jerzy Bereszko, CC BY-SA 4.0, via Wikimedia Commons
+
+## Search engine optimisation (SEO)
+
+- **Pages:** the home page plus three keyword pages: `grenada-airport-taxi/` (with the full airport fare table), `grenada-island-tours/` and `grenada-car-rental/`. Each has its own title, description, keywords, social-sharing tags, breadcrumb and structured data (business, tours, cars, FAQ).
+- **Sitemap:** `sitemap.xml` lists all four pages and their photos. Submit it in Google Search Console and Bing Webmaster Tools.
+- **robots.txt:** blocks `admin.html` and the bookings data. Note: on a `github.io/wjrdemo2/` address, search engines only read robots.txt at the top of the domain, so it starts working once the site has its own domain. `admin.html` also has its own "noindex" tag, so it stays out of Google either way.
+- **Own domain later:** the site address is set in one place, `SITE` at the top of `seo.py` (Savvy Tech's build script). Change it and rebuild, and every canonical link, sitemap entry and structured-data URL updates.
+- **Search Console verification:** paste Google's "HTML tag" code into `GSC_VERIFICATION` in `seo.py` and rebuild, or verify by uploading Google's HTML file to the repository.

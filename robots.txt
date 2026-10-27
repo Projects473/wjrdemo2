@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /wjrdemo2/admin.html
+Disallow: /wjrdemo2/data/
 
 Sitemap: https://projects473.github.io/wjrdemo2/sitemap.xml
