@@ -144,7 +144,7 @@
     "@id": "https://projects473.github.io/wjrdemo2/#business"
    },
    "inLanguage": "en",
-   "dateModified": "2026-10-27"
+   "dateModified": "2026-10-28"
   },
   {
    "@type": "FAQPage",
@@ -187,7 +187,7 @@
      "name": "Do I need a local driving permit to rent a car in Grenada?",
      "acceptedAnswer": {
       "@type": "Answer",
-      "text": "Yes. Visitors need a Grenada local driving permit as well as their own driver's licence. The fee is EC$60 and the permit is issued at the Central Police Station on the Carenage in St. George's. Ask us about it when you book."
+      "text": "Yes. Visitors need a temporary Grenada driver's licence as well as their own licence. It costs EC$60 and you can get it at any time from the Central Police Station in St. George's or the South St. George Police Station. We usually take renters to the police station to get it."
      }
     },
     {
@@ -207,7 +207,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Kaushan+Script&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/styles.css?v=202610270903">
+<link rel="stylesheet" href="css/styles.css?v=202610281144">
 <script>(function(){var t=null;try{t=new URLSearchParams(location.search).get('theme')||localStorage.getItem('wjr-theme')}catch(e){}if(t==='dark')document.documentElement.removeAttribute('data-theme');var d=document.documentElement;if('IntersectionObserver' in window){d.classList.add('js-rv');setTimeout(function(){d.classList.add('rv-all')},5000)}})();</script>
 </head>
 <body>
@@ -235,6 +235,7 @@
       <a href="#tours"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c0-6 1-10 3-13"/><path d="M15 9c-2-3-6-3-9-1 3 0 5 1 7 3M15 9c1-3 5-4 8-2-3 0-5 1-6 3M15 9c0-3-2-5-5-6 1 2 2 4 2 6"/></svg><span>Tours</span></a>
       <a href="#rentals"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="m10.8 12.2 8.2-8.2M17 6l2 2M15 8l2 2"/></svg><span>Rentals</span></a>
       <a href="#contact"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.7-5A8.5 8.5 0 1 1 8 19.3L3 21z"/></svg><span>Contact</span></a>
+      <a href="about/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span>About</span></a>
     </nav>
     <a class="brand" href="#top" aria-label="WJR Taxi Tours and Auto Rentals, home"><img src="assets/wjr-logo-sm.png" alt="WJR Taxi Tours &amp; Auto Rentals logo" width="300" height="140"></a>
     <div class="nav-r">
@@ -286,8 +287,8 @@
         <div class="panel-art" aria-hidden="true"><img title="Photo: Tokumeigakarinoaoshima, CC BY-SA 4.0" src="https://thumb.wikimedia.org/wikipedia/commons/thumb/0/07/Toyota_RAIZE_HYBRID_Z_%285AA-A202A-GBSH%29_front.jpg/960px-Toyota_RAIZE_HYBRID_Z_%285AA-A202A-GBSH%29_front.jpg" alt=""></div>
         <div class="panel-body">
           <div class="fields" id="p-taxi" role="tabpanel">
-            <div class="field has-select"><label for="txFrom"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>Your area</label><select id="txFrom"></select></div>
-            <div class="field has-select"><label for="txTo"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Going to</label><select id="txTo"><option value="">Choose a destination</option></select></div>
+            <div class="field has-select"><label for="txFrom"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>From</label><select id="txFrom"></select><input class="other-in" id="txFromOther" type="text" placeholder="Type your pickup place" aria-label="Type your pickup place"><button class="other-back" type="button" aria-label="Back to the list of places" title="Back to the list">List</button></div>
+            <div class="field has-select"><label for="txTo"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Going to</label><select id="txTo"><option value="">Choose a destination</option></select><input class="other-in" id="txToOther" type="text" placeholder="Type where you are going" aria-label="Type where you are going"><button class="other-back" type="button" aria-label="Back to the list of places" title="Back to the list">List</button></div>
             <div class="field date-field"><label for="txWhen"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Date and time</label><input id="txWhen" type="datetime-local"><span class="ph" aria-hidden="true">Select date and time</span></div>
             <div class="field has-select"><label for="txPax"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5M16 4.5a3.5 3.5 0 0 1 0 7M18 14.6c2 .7 3.2 2.6 3.5 5.4"/></svg>Passengers</label><select id="txPax"><option value="1">1 passenger</option><option value="2" selected>2 passengers</option><option value="3">3 passengers</option><option value="4">4 passengers</option><option value="5">5 passengers</option><option value="6">6 passengers</option><option value="7">7 passengers</option><option value="8">8 passengers</option><option value="9">9 passengers</option><option value="10">10 passengers</option></select></div>
             <button class="btn" type="submit">Book this ride</button>
@@ -356,6 +357,21 @@
     </div>
   </section>
 
+  <!-- Our taxis -->
+  <section class="block fleet-sec" id="taxis">
+    <div class="wrap">
+      <div class="head-row rv">
+        <h2 class="h2"><span class="label">Our taxis</span>Ride in <span class="o">comfort</span></h2>
+        <p>Spacious Toyota minivans for Grenada airport transfers, island tours and group trips, driven by the WJR Taxi Tours &amp; Auto Rentals team.</p>
+      </div>
+      <div class="fleet">
+        <figure class="fleet-card glass rv"><img src="assets/taxi-noah.jpg" alt="Silver Toyota Noah taxi minivan from WJR Taxi Tours &amp; Auto Rentals" loading="lazy"><figcaption><b>Toyota Noah</b><span>Silver minivan</span></figcaption></figure>
+        <figure class="fleet-card glass rv"><img src="assets/taxi-alphard.jpg" alt="Black Toyota Alphard taxi minivan from WJR Taxi Tours &amp; Auto Rentals" loading="lazy"><figcaption><b>Toyota Alphard</b><span>Black minivan</span></figcaption></figure>
+      </div>
+      <div class="center-btn"><a class="btn" href="#book">Book a taxi</a></div>
+    </div>
+  </section>
+
   <!-- Island tours -->
   <section class="block photo-sec" id="tours">
     <div class="bgimg" style="background-image:url('https://images.unsplash.com/photo-1616555846456-6d53b92669a8?auto=format&fit=crop&q=70&w=1900')" aria-hidden="true"></div>
@@ -370,35 +386,35 @@
           <div class="pic"><img src="assets/tower-estate.jpg" alt="The Tower Estate great house, St. Paul's, Grenada" loading="lazy"></div>
           <h3>Gardens and plantations</h3>
           <div class="meta"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Mt. Parnassus Plantation, Laura Herb and Spice Garden, Buttercup Gardens, The Tower</div>
-          <div class="row"><span>From EC$370 / US$140</span><a class="btn btn-sm" href="#book" data-tour="Garden of Eden">Book</a></div>
+          <div class="row"><a class="btn btn-sm" href="#book" data-tour="Garden of Eden">Book</a></div>
         </article>
         <article class="tour glass">
           <p class="ttl">Waterfalls</p>
           <div class="pic"><img src="https://images.unsplash.com/photo-1709348369040-c83f3f9e4a5d?auto=format&fit=crop&w=800&q=70" alt="Waterfall in the rainforest" loading="lazy"></div>
           <h3>Falls of the interior</h3>
           <div class="meta"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Annandale, Concord, Seven Sisters, Royal Mt. Carmel</div>
-          <div class="row"><span>From EC$370 / US$140</span><a class="btn btn-sm" href="#book" data-tour="Waterfalls">Book</a></div>
+          <div class="row"><a class="btn btn-sm" href="#book" data-tour="Waterfalls">Book</a></div>
         </article>
         <article class="tour glass">
           <p class="ttl">St. George&#39;s</p>
           <div class="pic"><img src="assets/st-georges.jpg" alt="The Carenage, St. George&#39;s, at sunset" loading="lazy"></div>
           <h3>The capital and Grand Anse</h3>
           <div class="meta"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Grand Anse Beach, House of Chocolate, Spice Market, Fort George</div>
-          <div class="row"><span>From EC$370 / US$140</span><a class="btn btn-sm" href="#book" data-tour="St. George&#39;s">Book</a></div>
+          <div class="row"><a class="btn btn-sm" href="#book" data-tour="St. George&#39;s">Book</a></div>
         </article>
         <article class="tour glass">
           <p class="ttl">Chocolate Rum</p>
           <div class="pic"><img src="https://upload.wikimedia.org/wikipedia/commons/b/b3/Fort_Frederick%2C_Grenada_%2840001365693%29.jpg" alt="Fort Frederick on Richmond Hill above St. George&#39;s" title="Fort Frederick. Photo: David Stanley, CC BY 2.0" style="object-position:50% 40%" loading="lazy"></div>
           <h3>Rum, forts and chocolate</h3>
           <div class="meta"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Clarke&#39;s Court Rum Distillery, Fort Frederick, House of Chocolate (St. George&#39;s)</div>
-          <div class="row"><span>From EC$370 / US$140</span><a class="btn btn-sm" href="#book" data-tour="Chocolate Rum">Book</a></div>
+          <div class="row"><a class="btn btn-sm" href="#book" data-tour="Chocolate Rum">Book</a></div>
         </article>
         <article class="tour glass">
           <p class="ttl">Round de Island</p>
           <div class="pic"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Grand_Etang_Lake.jpg/1280px-Grand_Etang_Lake.jpg" alt="Rainforest and Grand Etang Lake, Grenada" title="Grand Etang. Photo: Jerzy Bereszko, CC BY-SA 4.0" style="object-position:50% 55%" loading="lazy"></div>
           <h3>Rum, chocolate and rainforest</h3>
           <div class="meta"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Clarke&#39;s Court Rum Distillery, Tri-Island Chocolate Factory (make your own chocolate), Grand Etang Rain Forest</div>
-          <div class="row"><span>From EC$370 / US$140</span><a class="btn btn-sm" href="#book" data-tour="Round de Island">Book</a></div>
+          <div class="row"><a class="btn btn-sm" href="#book" data-tour="Round de Island">Book</a></div>
         </article>
       </div>
       <div class="tour-nav"><div class="arrows"><button type="button" id="tPrev" aria-label="Previous tours"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button><button type="button" id="tNext" aria-label="Next tours"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div></div>
@@ -465,9 +481,9 @@
       <div class="counter"><b>6</b><span>parishes<br>covered</span></div>
     </div>
     <div class="marquee" aria-hidden="true">
-      <figure><img src="https://images.unsplash.com/photo-1617566852666-c8346df97d5b?auto=format&fit=crop&w=600&q=65" alt="Boat on clear blue water off Grenada" loading="lazy"></figure>
-      <figure><img src="https://images.unsplash.com/photo-1752414450622-4ac153d96add?auto=format&fit=crop&w=600&q=65" alt="Aerial view of the St. George&#39;s waterfront, Grenada" loading="lazy"></figure>
-      <figure><img src="https://images.unsplash.com/photo-1637003405426-56ccdf594e3e?auto=format&fit=crop&w=600&q=65" alt="Palm-lined beach in Grenada from above" loading="lazy"></figure>
+      <figure><img src="assets/gallery/grand-anse-beach.jpg" alt="Grand Anse Beach, looking across the bay to St. George&#39;s" loading="lazy"></figure>
+      <figure><img src="assets/gallery/grenada-flag.jpg" alt="Flying the Grenada flag on the coast" loading="lazy"></figure>
+      <figure><img src="assets/gallery/beach-palms.jpg" alt="Palm trees on a quiet Grenada beach" loading="lazy"></figure>
       <figure><img src="https://images.unsplash.com/photo-1616464654572-43996d6b0133?auto=format&fit=crop&w=600&q=65" alt="Boat moored beside the harbour, Grenada" loading="lazy"></figure>
       <figure><img src="https://images.unsplash.com/photo-1663513628041-1ca7257e853d?auto=format&fit=crop&w=600&q=65" alt="Fishing boats pulled up on a Grenada beach" loading="lazy"></figure>
       <figure><img src="https://images.unsplash.com/photo-1678377402171-e96b478b92ed?auto=format&fit=crop&w=600&q=65" alt="St. George&#39;s hillside town and mountains, Grenada" loading="lazy"></figure>
@@ -512,7 +528,7 @@
   <section class="block" id="questions">
     <div class="wrap">
       <div class="center rv"><h2 class="h2"><span class="label">Questions</span>Grenada taxi, tours <span class="sky">and rentals</span></h2><p class="lede">Quick answers about airport taxis, island tours and renting a car in Grenada.</p></div>
-      <div class="faq"><details class="faq-item glass"><summary><h3>How much is a taxi from Grenada airport to Grand Anse?</h3></summary><p>From Maurice Bishop International Airport (MBIA) to the Grand Anse hotels, such as Siesta and the Umbrellas area, the fare is EC$60 / US$25 for 1 to 2 passengers. Each extra passenger is EC$10. Use the booking bar to see the rate for any destination.</p></details><details class="faq-item glass"><summary><h3>Will my driver meet me at the airport?</h3></summary><p>Yes. Send your flight number when you book and your driver will be waiting at arrivals at MBIA. We also pick up from the cruise port in St. George&#39;s.</p></details><details class="faq-item glass"><summary><h3>Do you offer tours for cruise ship passengers?</h3></summary><p>Yes. Our private island tours run as a half day (4 hours) or a whole day (7 hours), so they fit around your time in port. Tell us your ship&#39;s arrival and departure times when you book.</p></details><details class="faq-item glass"><summary><h3>How much is a private island tour in Grenada?</h3></summary><p>A half-day tour (4 hours) is EC$370 / US$140 and a whole-day tour (7 hours) is EC$650 / US$245, for 1 to 2 people. Each additional person is EC$26 / US$10.</p></details><details class="faq-item glass"><summary><h3>Do I need a local driving permit to rent a car in Grenada?</h3></summary><p>Yes. Visitors need a Grenada local driving permit as well as their own driver&#39;s licence. The fee is EC$60 and the permit is issued at the Central Police Station on the Carenage in St. George&#39;s. Ask us about it when you book.</p></details><details class="faq-item glass"><summary><h3>Which side of the road do you drive on in Grenada?</h3></summary><p>On the left. All our rental cars are automatic, right-hand-drive hybrids, so there is no gear stick to manage.</p></details></div>
+      <div class="faq"><details class="faq-item glass"><summary><h3>How much is a taxi from Grenada airport to Grand Anse?</h3></summary><p>From Maurice Bishop International Airport (MBIA) to the Grand Anse hotels, such as Siesta and the Umbrellas area, the fare is EC$60 / US$25 for 1 to 2 passengers. Each extra passenger is EC$10. Use the booking bar to see the rate for any destination.</p></details><details class="faq-item glass"><summary><h3>Will my driver meet me at the airport?</h3></summary><p>Yes. Send your flight number when you book and your driver will be waiting at arrivals at MBIA. We also pick up from the cruise port in St. George&#39;s.</p></details><details class="faq-item glass"><summary><h3>Do you offer tours for cruise ship passengers?</h3></summary><p>Yes. Our private island tours run as a half day (4 hours) or a whole day (7 hours), so they fit around your time in port. Tell us your ship&#39;s arrival and departure times when you book.</p></details><details class="faq-item glass"><summary><h3>How much is a private island tour in Grenada?</h3></summary><p>A half-day tour (4 hours) is EC$370 / US$140 and a whole-day tour (7 hours) is EC$650 / US$245, for 1 to 2 people. Each additional person is EC$26 / US$10.</p></details><details class="faq-item glass"><summary><h3>Do I need a local driving permit to rent a car in Grenada?</h3></summary><p>Yes. Visitors need a temporary Grenada driver&#39;s licence as well as their own licence. It costs EC$60 and you can get it at any time from the Central Police Station in St. George&#39;s or the South St. George Police Station. We usually take renters to the police station to get it.</p></details><details class="faq-item glass"><summary><h3>Which side of the road do you drive on in Grenada?</h3></summary><p>On the left. All our rental cars are automatic, right-hand-drive hybrids, so there is no gear stick to manage.</p></details></div>
     </div>
   </section>
 
@@ -558,9 +574,12 @@
         <h3>Questions about a ride,<br>tour or car? Message<br>WJR Taxi Tours &amp; Auto Rentals.</h3>
         <a class="btn" href="https://wa.me/14734037483" target="_blank" rel="noopener">WhatsApp +1 (473) 403-7483</a>
       </div>
-      <div class="f-col">
+      <div class="f-col f-links">
         <h4>Quick links</h4>
-        <ul><li><a href="#destinations">Destinations</a></li><li><a href="#tours">Island tours</a></li><li><a href="#rentals">Car rentals</a></li><li><a href="#faq">Rental terms</a></li><li><a href="#contact">Contact</a></li><li><a href="grenada-airport-taxi/">Airport taxi rates</a></li><li><a href="grenada-island-tours/">Grenada island tours</a></li><li><a href="grenada-car-rental/">Car rental in Grenada</a></li><li><a href="https://forms.office.com/r/e2x5VSHUy5" target="_blank" rel="noopener">Tour feedback survey</a></li></ul>
+        <div class="ql-grid">
+          <nav aria-label="On this site"><p class="ql-h">On this site</p><ul><li><a href="#destinations"><span>Destinations</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></li><li><a href="#tours"><span>Island tours</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></li><li><a href="#rentals"><span>Car rentals</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></li><li><a href="#faq"><span>Rental terms</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></li><li><a href="about/"><span>About us</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></li><li><a href="#contact"><span>Contact</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></li></ul></nav>
+          <nav aria-label="Plan your trip"><p class="ql-h">Plan your trip</p><ul><li><a href="grenada-airport-taxi/"><span>Airport taxi rates</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></li><li><a href="grenada-island-tours/"><span>Tour details</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></li><li><a href="grenada-car-rental/"><span>Car rental guide</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></li><li><a href="https://forms.office.com/r/e2x5VSHUy5" target="_blank" rel="noopener"><span>Tour feedback survey</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></li></ul></nav>
+        </div>
       </div>
     </div>
     <div class="f-bottom">
@@ -576,8 +595,8 @@
   <a class="btn btn-peach wa" href="https://wa.me/14734037483" target="_blank" rel="noopener" aria-label="Chat on WhatsApp"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.7-5A8.5 8.5 0 1 1 8 19.3L3 21z"/></svg></a>
 </div>
 
-<script src="js/fares.js?v=202610270903"></script>
-<script src="js/rentals.js?v=202610270903"></script>
-<script src="js/main.js?v=202610270903"></script>
+<script src="js/fares.js?v=202610281144"></script>
+<script src="js/rentals.js?v=202610281144"></script>
+<script src="js/main.js?v=202610281144"></script>
 </body>
 </html>

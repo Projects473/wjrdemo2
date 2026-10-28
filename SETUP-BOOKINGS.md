@@ -59,3 +59,17 @@ The example bookings show as "Example booking". Delete them once real bookings s
 - **Expired key:** the bookings page says the key was refused. Create a new token the same way and paste it in.
 - **History:** every change is saved as a commit in the repository, so earlier versions of the bookings file can be recovered from GitHub's history.
 - Each save makes GitHub Pages republish the site, which is normal and takes about a minute.
+
+## Photos and videos on the About page
+
+The bookings page also manages the photos and videos on the website's About page.
+
+1. Open the bookings page and enter the password.
+2. Scroll to **Photos and videos**.
+3. Tap **Choose photos or a video**, pick one or more photos (or a short video), add a caption if you like, and tap **Add to website**.
+4. The About page shows them, newest first, within about a minute.
+
+- Photos are resized automatically, so they can come straight from the phone.
+- Videos must be under 25 MB, which is roughly 30 to 60 seconds of phone video. Post longer videos on Facebook.
+- To take something down, tap **Remove** under it, then **Tap to confirm**.
+- The list is saved in `data/gallery.json` and the files in `assets/gallery/`. Don't upload over `data/gallery.json` when updating the site, or Wayne's photos will disappear from the page.

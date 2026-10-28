@@ -104,6 +104,14 @@ details.more .btn{margin-top:14px}
 @media (max-width:860px){.grid{grid-template-columns:1fr}}
 @media (max-width:560px){.top .in{gap:8px;padding:8px 12px}.top h1{font-size:21px}.top small{display:none}.top img{height:32px}.top .btn-sm{padding:8px 10px;font-size:11px}.wrap{padding:16px 12px 50px}.card{padding:16px}.grid>*,.list{min-width:0}.lh{flex-wrap:wrap}}
 html,body{overflow-x:hidden}
+
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-top:16px}
+.gal figure{margin:0;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:#fff;display:flex;flex-direction:column}
+.gal img,.gal video{width:100%;aspect-ratio:1/1;object-fit:cover;background:#eef1f4;display:block}
+.gal figcaption{padding:8px;font-size:12.5px;line-height:1.35;flex:1}
+.gal .del{margin:0 8px 8px;border:1.5px solid var(--line);background:#fff;border-radius:4px;padding:7px;font-weight:800;font-size:12px;cursor:pointer}
+.gal .del.armed{background:var(--red);border-color:var(--red);color:#fff}
+input[type=file]{width:100%;padding:10px;border:1.5px dashed var(--line);border-radius:4px;background:#fff}
 </style>
 </head>
 <body>
@@ -178,6 +186,20 @@ html,body{overflow-x:hidden}
       <div id="items"></div>
       <p class="status" id="sync"></p>
     </div>
+
+    <section class="card list" id="galCard">
+      <div class="lh"><h3>Photos and videos</h3><span class="status" id="galCount"></span></div>
+      <p class="status">Add photos or short videos from your tours and trips. They show on the About page of the website within about a minute. Photos are resized automatically; videos can be up to 25 MB (about 30 to 60 seconds of phone video).</p>
+      <form class="form" id="galForm">
+        <label for="galFile">Choose photos or a video</label>
+        <input id="galFile" type="file" accept="image/*,video/mp4,video/quicktime,video/webm" multiple required>
+        <label for="galCap">Caption</label>
+        <input id="galCap" type="text" maxlength="120" placeholder="Optional, e.g. Grand Etang tour with guests from Canada">
+        <button class="btn btn-peach" type="submit" id="galSave">Add to website</button>
+        <div class="msg" id="galMsg" role="status"></div>
+      </form>
+      <div class="gal" id="galItems"></div>
+    </section>
 
     <details class="card list more">
       <summary>Change password</summary>
@@ -330,7 +352,7 @@ html,body{overflow-x:hidden}
       return unseal(k, file.check).then(function () { key = k; return decryptAll(); }, function () { throw new Error('Wrong password'); });
     }).then(openApp).catch(function (err) { fail(err, m); $('pin').value = ''; });
   });
-  function openApp() { $('pin').value = $('pin2').value = ''; $('loginMsg').textContent = ''; show('app'); render(); synced(); }
+  function openApp() { $('pin').value = $('pin2').value = ''; $('loginMsg').textContent = ''; show('app'); render(); synced(); galInit(); }
   $('logout').addEventListener('click', function () { key = null; bookings = []; start(); });
   $('refresh').addEventListener('click', function () {
     $('sync').textContent = 'Refreshing...';
@@ -550,6 +572,109 @@ html,body{overflow-x:hidden}
 
   if (!window.crypto || !crypto.subtle) { show('setup'); $('setupMsg').className = 'msg err'; $('setupMsg').textContent = 'This browser cannot open the bookings page. Use Chrome, Safari or Edge on the website address.'; return; }
   start();
+
+  // ---------- Photos and videos for the About page (data/gallery.json + assets/gallery/) ----------
+  var CBASE = (G.apiBase || 'https://api.github.com') + '/repos/' + G.owner + '/' + G.repo + '/contents/';
+  var GAL = 'data/gallery.json', galItems = [], galArm = null, MAX_VIDEO = 25 * 1024 * 1024;
+  function ghGet(path) {
+    return fetch(CBASE + path + '?ref=' + encodeURIComponent(G.branch || 'main') + '&t=' + Date.now(), { headers: hdr(), cache: 'no-store' }).then(function (r) {
+      if (r.status === 404) return null;
+      if (r.status === 401 || r.status === 403) throw new Error('auth');
+      if (!r.ok) throw new Error('GitHub error ' + r.status);
+      return r.json();
+    });
+  }
+  function ghPut(path, content64, prevSha, message) {
+    var body = { message: message, content: content64, branch: G.branch || 'main' };
+    if (prevSha) body.sha = prevSha;
+    return fetch(CBASE + path, { method: 'PUT', headers: Object.assign({ 'Content-Type': 'application/json' }, hdr()), body: JSON.stringify(body) }).then(function (r) {
+      if (r.status === 409 || r.status === 422) { var e = new Error('conflict'); e.conflict = true; throw e; }
+      if (r.status === 401 || r.status === 403) throw new Error('auth');
+      if (!r.ok) throw new Error('GitHub error ' + r.status);
+      return r.json();
+    });
+  }
+  function ghDel(path, fileSha, message) {
+    return fetch(CBASE + path, { method: 'DELETE', headers: Object.assign({ 'Content-Type': 'application/json' }, hdr()), body: JSON.stringify({ message: message, sha: fileSha, branch: G.branch || 'main' }) });
+  }
+  function galLoad() {
+    return ghGet(GAL).then(function (j) {
+      if (!j) return { items: [], sha: null };
+      return { items: (JSON.parse(dec.decode(unb64(j.content.replace(/\s/g, '')))).items || []), sha: j.sha };
+    });
+  }
+  function galChange(fn, message, tries) {
+    tries = tries || 0;
+    return galLoad().then(function (res) {
+      fn(res.items);
+      return ghPut(GAL, b64(enc.encode(JSON.stringify({ items: res.items }, null, 2) + '\n')), res.sha, message).then(function () { galItems = res.items; });
+    }).catch(function (e) { if (e.conflict && tries < 3) return galChange(fn, message, tries + 1); throw e; });
+  }
+  function galRender() {
+    $('galCount').textContent = galItems.length + ' on the website';
+    $('galItems').innerHTML = galItems.map(function (it, i) {
+      var media = it.type === 'video' ? '<video src="' + esc(it.src) + '" preload="metadata" muted playsinline controls></video>' : '<img src="' + esc(it.src) + '" alt="" loading="lazy">';
+      return '<figure>' + media + '<figcaption>' + (esc(it.caption || '') || '<span class="status">No caption</span>') + '</figcaption><button type="button" class="del' + (galArm === it.src ? ' armed' : '') + '" data-i="' + i + '">' + (galArm === it.src ? 'Tap to confirm' : 'Remove') + '</button></figure>';
+    }).join('') || '<p class="status">No photos yet.</p>';
+  }
+  function galInit() {
+    if (!/^data\//.test(FILE)) { $('galCard').hidden = true; return; }
+    galLoad().then(function (res) { galItems = res.items; galRender(); }).catch(function (e) { fail(e, $('galMsg')); });
+  }
+  function slug(name) { return (name.replace(/\.[^.]+$/, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'photo').slice(0, 40); }
+  function stamp() { var d = new Date(), p = function (n) { return (n < 10 ? '0' : '') + n; }; return d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + '-' + p(d.getHours()) + p(d.getMinutes()) + p(d.getSeconds()); }
+  function photo64(f) {
+    return new Promise(function (ok, bad) {
+      var img = new Image(), url = URL.createObjectURL(f);
+      img.onload = function () {
+        var s = Math.min(1, 1600 / Math.max(img.naturalWidth, img.naturalHeight)), c = document.createElement('canvas');
+        c.width = Math.round(img.naturalWidth * s); c.height = Math.round(img.naturalHeight * s);
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
+        c.toBlob(function (bl) { bl.arrayBuffer().then(function (buf) { ok(b64(new Uint8Array(buf))); }); }, 'image/jpeg', 0.82);
+      };
+      img.onerror = function () { bad(new Error('This photo could not be read. Try a JPG or PNG.')); };
+      img.src = url;
+    });
+  }
+  function video64(f) {
+    return new Promise(function (ok, bad) {
+      if (f.size > MAX_VIDEO) return bad(new Error('This video is ' + Math.round(f.size / 1048576) + ' MB. Please keep videos under 25 MB, or post longer videos on Facebook.'));
+      var r = new FileReader(); r.onload = function () { ok(String(r.result).split(',')[1]); }; r.onerror = function () { bad(new Error('This video could not be read.')); }; r.readAsDataURL(f);
+    });
+  }
+  $('galForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var files = Array.prototype.slice.call($('galFile').files), cap = $('galCap').value.trim(), m = $('galMsg'), btn = $('galSave');
+    if (!files.length) return;
+    btn.disabled = true; m.className = 'msg'; var added = [];
+    var next = function (i) {
+      if (i >= files.length) return Promise.resolve();
+      var f = files[i], video = /^video\//.test(f.type);
+      m.textContent = 'Uploading ' + (i + 1) + ' of ' + files.length + '...';
+      var ext = video ? (f.name.split('.').pop() || 'mp4').toLowerCase() : 'jpg';
+      var path = 'assets/gallery/' + stamp() + '-' + i + '-' + slug(f.name) + '.' + ext;
+      return (video ? video64(f) : photo64(f)).then(function (c64) {
+        return ghPut(path, c64, null, 'Add ' + (video ? 'video' : 'photo') + ' to the website gallery');
+      }).then(function () { added.push({ src: path, type: video ? 'video' : 'image', caption: cap, date: new Date().toISOString().slice(0, 10) }); return next(i + 1); });
+    };
+    next(0).then(function () {
+      if (!added.length) return;
+      return galChange(function (items) { Array.prototype.unshift.apply(items, added); }, 'Update the website gallery');
+    }).then(function () {
+      galRender(); $('galFile').value = ''; $('galCap').value = '';
+      m.className = 'msg ok'; m.textContent = added.length + (added.length === 1 ? ' item' : ' items') + ' added. The About page updates in about a minute.';
+    }).catch(function (err) { fail(err, m); if (added.length) galChange(function (items) { Array.prototype.unshift.apply(items, added); }, 'Update the website gallery').then(galRender).catch(function () {}); })
+      .then(function () { btn.disabled = false; });
+  });
+  $('galItems').addEventListener('click', function (e) {
+    var b = e.target.closest('.del'); if (!b) return;
+    var it = galItems[+b.dataset.i]; if (!it) return;
+    if (galArm !== it.src) { galArm = it.src; galRender(); return; }
+    galArm = null; b.disabled = true; b.textContent = 'Removing...';
+    galChange(function (items) { for (var i = items.length - 1; i >= 0; i--) if (items[i].src === it.src) items.splice(i, 1); }, 'Remove an item from the website gallery')
+      .then(function () { galRender(); return ghGet(it.src).then(function (j) { if (j && j.sha) return ghDel(it.src, j.sha, 'Delete gallery file'); }); })
+      .catch(function (err) { fail(err, $('galMsg')); galRender(); });
+  });
 })();
 </script>
 </body>

@@ -1,0 +1,7 @@
+{
+  "items": [
+    { "src": "assets/gallery/grenada-flag.jpg", "type": "image", "caption": "Flying the Grenada flag on the coast", "date": "2026-10-28" },
+    { "src": "assets/gallery/grand-anse-beach.jpg", "type": "image", "caption": "Grand Anse Beach, looking across the bay to St. George's", "date": "2026-10-28" },
+    { "src": "assets/gallery/beach-palms.jpg", "type": "image", "caption": "Palm trees on a quiet Grenada beach", "date": "2026-10-28" }
+  ]
+}

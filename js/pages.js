@@ -52,4 +52,25 @@
   var menuBtn = $('menuBtn'), links = $('navlinks');
   menuBtn.addEventListener('click', function () { var o = links.classList.toggle('open'); menuBtn.setAttribute('aria-expanded', o); });
   links.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', function () { links.classList.remove('open'); menuBtn.setAttribute('aria-expanded', 'false'); }); });
+
+  // About page: photos and videos, refreshed from data/gallery.json (updated from the bookings page)
+  var grid = $('galleryGrid'), lb = $('lightbox');
+  function escH(s) { return String(s || '').replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function draw(items) {
+    grid.innerHTML = items.map(function (it) {
+      var cap = escH(it.caption), media = it.type === 'video'
+        ? '<video src="' + escH(it.src) + '" controls preload="metadata" playsinline></video>'
+        : '<button type="button" class="gal-open" aria-label="View larger: ' + cap + '"><img src="' + escH(it.src) + '" alt="' + cap + '" loading="lazy"></button>';
+      return '<figure class="gal-item glass">' + media + (cap ? '<figcaption>' + cap + '</figcaption>' : '') + '</figure>';
+    }).join('');
+  }
+  if (grid) {
+    fetch(grid.dataset.src + '?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) { if (d && d.items && d.items.length) draw(d.items); }).catch(function () {});
+    grid.addEventListener('click', function (e) {
+      var b = e.target.closest('.gal-open'); if (!b || !lb || !lb.showModal) return;
+      var img = b.querySelector('img'); lb.querySelector('img').src = img.src; lb.querySelector('img').alt = img.alt; lb.querySelector('p').textContent = img.alt; lb.showModal();
+    });
+  }
+  if (lb) { lb.querySelector('.lb-close').addEventListener('click', function () { lb.close(); }); lb.addEventListener('click', function (e) { if (e.target === lb) lb.close(); }); }
 })();

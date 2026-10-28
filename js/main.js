@@ -11,65 +11,84 @@
   tabs.forEach(function (t) { t.addEventListener('click', function () { showTab(t.dataset.tab); }); });
 
   // ---------- Taxi rates ----------
-  // Pickup areas. Wayne's list has one column for "MBIA airport / Royalton"; it is split here so the
-  // EC$10 airport pickup charge only applies to pickups at the airport itself.
-  var ORIGINS = [];
-  F.origins.forEach(function (o, col) {
-    if (col === 4) { ORIGINS.push({ label: 'MBIA airport', col: 4, airport: true }); ORIGINS.push({ label: 'Royalton', col: 4 }); }
-    else ORIGINS.push({ label: o, col: col });
-  });
-  var AIRPORT = 4;                 // index of "MBIA airport" in ORIGINS
-  var AIRPORT_FEE = 10, EXTRA_PAX_FEE = 10, PAX_INCLUDED = 2;
+  // Wayne's list gives fares from 6 pickup areas (columns) to every destination (rows). The same fare
+  // applies in reverse, so any listed place can be the pickup or the drop-off. "MBIA airport / Royalton"
+  // is split so the EC$10 airport pickup charge only applies to pickups at the airport itself.
+  var AIRPORT_FEE = 10, EXTRA_PAX_FEE = 10, PAX_INCLUDED = 2, OTHER = 'other';
   var fromSel = $('txFrom'), toSel = $('txTo'), paxSel = $('txPax');
-  ORIGINS.forEach(function (o, i) { var opt = new Option(o.label, i); if (i === AIRPORT) opt.selected = true; fromSel.add(opt); });
-  var parishes = [];
-  F.rows.forEach(function (r) { if (parishes.indexOf(r[1]) < 0) parishes.push(r[1]); });
-  parishes.forEach(function (p) {
-    var g = document.createElement('optgroup'); g.label = p;
-    F.rows.forEach(function (r, i) { if (r[1] === p) g.appendChild(new Option(r[0], i)); });
-    toSel.appendChild(g);
+  // destinations that sit inside a pickup area use that area's column too
+  var AREA_OF = { 'MBIA (Airport)': 4, 'Royalton Hotel': 4, "St. George's": 5, 'Secret Harbour': 1, 'Mahogany Run': 2, 'Calliste / Lavo Lanes': 3, 'Umbrellas': 0, 'Siesta Hotel': 0, 'Real Value IGA Supermarket': 0 };
+  var AREA_ROW = { 'MBIA airport': 'MBIA (Airport)', 'Royalton': 'Royalton Hotel', "St. George's": "St. George's", 'Secret Harbour': 'Secret Harbour', 'Mahogany Run / BBC Beach': 'Mahogany Run', 'Lavo Lanes / Calliste': 'Calliste / Lavo Lanes' };
+  function rowOf(name) { for (var i = 0; i < F.rows.length; i++) if (F.rows[i][0] === name) return i; return null; }
+  var PLACES = [];
+  F.origins.forEach(function (o, col) {
+    var add = function (label, airport) { var r = AREA_ROW[label]; PLACES.push({ label: label, col: col, row: r ? rowOf(r) : null, airport: !!airport, group: 'Pickup areas' }); };
+    if (col === 4) { add('MBIA airport', true); add('Royalton'); } else add(o.replace(/\s*\/\s*/g, ' / '));
   });
-  function rowIndex(name) { for (var i = 0; i < F.rows.length; i++) if (F.rows[i][0] === name) return i; return -1; }
+  F.rows.forEach(function (r, i) { var c = AREA_OF[r[0]]; PLACES.push({ label: r[0], col: c === undefined ? null : c, row: i, airport: r[0] === 'MBIA (Airport)', group: r[1] }); });
+  var AIRPORT = 0;
+  PLACES.forEach(function (pl, i) { if (pl.airport && pl.group === 'Pickup areas') AIRPORT = i; });
+  function fillPlaces(sel) {
+    var groups = {};
+    PLACES.forEach(function (p, i) {
+      var g = groups[p.group];
+      if (!g) { g = groups[p.group] = document.createElement('optgroup'); g.label = p.group === 'Pickup areas' ? p.group : p.group + ' (parish)'; sel.appendChild(g); }
+      g.appendChild(new Option(p.label, i));
+    });
+    var og = document.createElement('optgroup'); og.label = 'Not on the list?'; og.appendChild(new Option('Other place (type it in)', OTHER)); sel.appendChild(og);
+  }
+  fillPlaces(fromSel); fillPlaces(toSel); fromSel.value = AIRPORT;
+  function rowIndex(name) { for (var i = 0; i < PLACES.length; i++) if (PLACES[i].group !== 'Pickup areas' && PLACES[i].label === name) return i; return -1; }
   // US$ for an EC$ amount, following the conversions used in the rate list (EC$60 = US$25, otherwise 40%)
   function usFor(ec) { return ec === 60 ? 25 : Math.round(ec * 0.4); }
   // Price for a trip: listed rate (1 to 2 passengers) + EC$10 airport pickup + EC$10 per extra passenger
-  function quote(originIdx, row, pax) {
-    var o = ORIGINS[originIdx], base = F.rows[row][2][o.col];
+  function quote(f, t, pax) {
+    if (f === OTHER || t === OTHER || f === '' || t === '') return { base: null };
+    var a = PLACES[f], b = PLACES[t], base = null;
+    if (f === t) base = 0;
+    else if (a.col !== null && b.row !== null) base = F.rows[b.row][2][a.col];
+    else if (b.col !== null && a.row !== null) base = F.rows[a.row][2][b.col];
     if (!base) return { base: base };
-    var air = o.airport ? AIRPORT_FEE : 0, extra = Math.max(0, pax - PAX_INCLUDED) * EXTRA_PAX_FEE;
+    var air = a.airport ? AIRPORT_FEE : 0, extra = Math.max(0, pax - PAX_INCLUDED) * EXTRA_PAX_FEE;
     var ec = base[0] + air + extra;
     return { base: base, ec: ec, us: (air || extra) ? usFor(ec) : base[1], air: air, extra: extra, extraPax: Math.max(0, pax - PAX_INCLUDED) };
   }
   function quoteText(q) {
     if (q.base === 0) return 'Same area: ask for the rate';
-    if (!q.base) return 'Ask for the rate';
+    if (!q.base) return 'Quote needed';
     return 'EC$' + q.ec + ' / US$' + q.us;
   }
-  function quoteNote(q) {
-    if (!q.air && !q.extra) return 'Listed rate for 1 to 2 passengers.';
-    var parts = ['EC$' + q.base[0] + ' listed rate'];
-    if (q.air) parts.push('EC$' + q.air + ' airport pickup');
-    if (q.extra) parts.push('EC$' + q.extra + ' for ' + q.extraPax + ' extra passenger' + (q.extraPax > 1 ? 's' : ''));
-    return parts.join(' + ');
-  }
-  var currentTab = 'taxi';
+  // "Other place": swap the list for a text box, with a button to go back to the list
+  function placeName(sel, inp) { return sel.value === OTHER ? (inp.value.trim() || '(not given)') : (sel.value === '' ? '-' : PLACES[+sel.value].label); }
+  var fromOther = $('txFromOther'), toOther = $('txToOther');
+  [[fromSel, fromOther], [toSel, toOther]].forEach(function (pair) {
+    var sel = pair[0], inp = pair[1], field = sel.closest('.field');
+    sel.addEventListener('change', function () { if (sel.value === OTHER) { field.classList.add('is-other'); inp.focus(); } });
+    field.querySelector('.other-back').addEventListener('click', function () { field.classList.remove('is-other'); sel.value = sel === fromSel ? AIRPORT : ''; inp.value = ''; updateFareOut(); sel.focus(); });
+    inp.addEventListener('input', updateFareOut);
+  });
+  var currentTab = 'taxi', rideBtn = document.querySelector('#p-taxi button[type="submit"]');
   function updateFareOut() {
     var out = $('fareOut');
     if (currentTab === 'rentals') { updateRentalOut(); return; }
     if (currentTab === 'tours') { updateTourOut(); return; }
-    if (toSel.value === '') { out.textContent = 'Choose where you are going to see the rate'; return; }
-    var q = quote(+fromSel.value, +toSel.value, +paxSel.value);
-    if (q.ec) out.innerHTML = '<span>Your rate</span><b>EC$' + q.ec + '</b><em>US$' + q.us + '</em>';
-    else out.textContent = q.base === 0 ? 'Same area: message us for the rate' : 'Message us for this rate';
+    var other = fromSel.value === OTHER || toSel.value === OTHER;
+    if (toSel.value === '' ) { out.textContent = 'Choose where you are going to see the rate'; rideBtn.textContent = 'Book this ride'; return; }
+    var q = quote(fromSel.value, toSel.value, +paxSel.value);
+    if (q.ec) { out.innerHTML = '<span>Your rate</span><b>EC$' + q.ec + '</b><em>US$' + q.us + '</em>'; rideBtn.textContent = 'Book this ride'; }
+    else {
+      out.textContent = q.base === 0 ? 'Same area: message us for the rate' : (other ? 'Not on our list? Send us the trip and WJR Taxi Tours & Auto Rentals will reply with a quote on WhatsApp.' : 'This trip is not on our rate list yet. Send it to us for a quote.');
+      rideBtn.textContent = 'Request a quote';
+    }
   }
   [fromSel, toSel, paxSel].forEach(function (el) { el.addEventListener('change', updateFareOut); });
 
   document.querySelectorAll('[data-dest]').forEach(function (card) {
     var i = rowIndex(card.dataset.dest); if (i < 0) return;
-    var q = quote(AIRPORT, i, 2);
-    card.querySelector('.r').textContent = F.rows[i][1];
+    card.querySelector('.r').textContent = PLACES[i].group;
     card.addEventListener('click', function () {
-      showTab('taxi'); fromSel.value = AIRPORT; toSel.value = i; updateFareOut();
+      showTab('taxi'); fromSel.closest('.field').classList.remove('is-other'); toSel.closest('.field').classList.remove('is-other');
+      fromSel.value = AIRPORT; toSel.value = i; updateFareOut();
       $('book').scrollIntoView({ behavior: 'smooth' });
     });
   });
@@ -257,8 +276,9 @@
       return d.toLocaleString('en-GB', o);
     };
     if (tab === 'taxi') {
-      lines = ['Hello WJR Taxi Tours & Auto Rentals, I would like to book a taxi.', 'From: ' + ORIGINS[+fromSel.value].label, 'To: ' + (toSel.value === '' ? '-' : F.rows[+toSel.value][0]), 'Passengers: ' + paxSel.value];
-      if (toSel.value !== '') { var q = quote(+fromSel.value, +toSel.value, +paxSel.value); lines.push('Rate shown: ' + quoteText(q)); }
+      var q = quote(fromSel.value, toSel.value, +paxSel.value);
+      lines = [q.ec ? 'Hello WJR Taxi Tours & Auto Rentals, I would like to book a taxi.' : 'Hello WJR Taxi Tours & Auto Rentals, could you send me a quote for a taxi?', 'From: ' + placeName(fromSel, fromOther), 'To: ' + placeName(toSel, toOther), 'Passengers: ' + paxSel.value];
+      if (q.ec) lines.push('Rate shown: ' + quoteText(q));
       lines.push('Pickup: ' + when('txWhen'));
     } else if (tab === 'tours') {
       var tq = tourQuote();
