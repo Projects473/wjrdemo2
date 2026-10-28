@@ -70,11 +70,8 @@ The six tours and their prices are in `index.html` (the Island tours section and
 
 Island photos are loaded from [Unsplash](https://unsplash.com) under the Unsplash License.
 
-Vehicle photos are loaded from Wikimedia Commons. Their licences require credit to the photographer; the credits are kept in each photo's tooltip (title attribute) and listed here:
+Rental car photos (Suzuki Ignis, Toyota Raize, Honda Vezel) are WJR Taxi Tours & Auto Rentals' own cars, stored in `assets/cars/`. Other photos from Wikimedia Commons need credit to the photographer; the credits are kept in each photo's tooltip (title attribute) and listed here:
 
-- Suzuki Ignis: Vauxford, CC BY-SA 4.0
-- Toyota Raize Hybrid: Tokumeigakarinoaoshima, CC BY-SA 4.0
-- Honda Vezel (HR-V): RL GNZLZ, CC BY-SA 2.0
 - The Tower Estate (Garden of Eden tour): photo supplied by WJR Taxi Tours & Auto Rentals, stored in `assets/tower-estate.jpg`
 - River tubing (About section): photo supplied by WJR Taxi Tours & Auto Rentals, stored in `assets/river-tubing.jpg`
 - The Carenage, St. George's (St. George's tour): photo supplied by WJR Taxi Tours & Auto Rentals, stored in `assets/st-georges.jpg`
