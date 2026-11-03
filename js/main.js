@@ -70,6 +70,7 @@
   });
   var currentTab = 'taxi', rideBtn = document.querySelector('#p-taxi button[type="submit"]');
   function updateFareOut() {
+    setTimeout(function () { var b = document.querySelector('[role=tabpanel]:not([hidden]) button[type="submit"]'); $('mailBtn').querySelector('span').textContent = b && /quote/i.test(b.textContent) ? 'Request quote by email' : 'Email instead'; }, 0);
     var out = $('fareOut');
     if (currentTab === 'rentals') { updateRentalOut(); return; }
     if (currentTab === 'tours') { updateTourOut(); return; }
@@ -78,7 +79,7 @@
     var q = quote(fromSel.value, toSel.value, +paxSel.value);
     if (q.ec) { out.innerHTML = '<span>Your rate</span><b>EC$' + q.ec + '</b><em>US$' + q.us + '</em>'; rideBtn.textContent = 'Book this ride'; }
     else {
-      out.innerHTML = (q.big ? 'One vehicle takes up to 5 passengers. For larger groups, send us the trip and we will reply with a quote.' : q.base === 0 ? 'Same area: send us the trip for a quote.' : (other ? 'Not on our list? Send us the trip and WJR Taxi Tours &amp; Auto Rentals will reply with a quote.' : 'This trip is not on our rate list yet. Send it to us for a quote.')) + ' <a href="#" class="mail-quote">Prefer email? Send it by email instead.</a>';
+      out.innerHTML = (q.big ? 'One vehicle takes up to 5 passengers. For larger groups, send us the trip and we will reply with a quote.' : q.base === 0 ? 'Same area: send us the trip for a quote.' : (other ? 'Not on our list? Send us the trip and WJR Taxi Tours &amp; Auto Rentals will reply with a quote.' : 'This trip is not on our rate list yet. Send it to us for a quote.')) + '';
       rideBtn.textContent = 'Request a quote';
     }
   }
@@ -97,12 +98,9 @@
 
   // ---------- Tour prices: half day or whole day for 1 to 2 people, plus EC$26 / US$10 per extra person ----------
   var TOUR = { half: { label: 'Half day (4 hours)', ec: 370, us: 140 }, full: { label: 'Whole day (7 hours)', ec: 650, us: 245 }, extraEc: 26, extraUs: 10, included: 2 };
-  var WHOLE_DAY_ONLY = ['Waterfalls', 'Chocolate Rum', 'Round de Island'], tourBtn = document.querySelector('#p-tours button[type="submit"]');
-  function syncTourLen() {
-    var only = WHOLE_DAY_ONLY.indexOf($('toTour').value) >= 0, half = $('toLen').querySelector('option[value="half"]');
-    half.disabled = only; half.textContent = only ? 'Half day (not offered)' : 'Half day, 4 hrs';
-    if (only) $('toLen').value = 'full';
-  }
+  // Each tour has one length: Garden of Eden and St. George's are half days, the others whole days
+  var TOUR_LEN = { 'Garden of Eden': 'half', "St. George's": 'half', 'Waterfalls': 'full', 'Chocolate Rum': 'full', 'Round de Island': 'full' }, tourBtn = document.querySelector('#p-tours button[type="submit"]');
+  function syncTourLen() { $('toLen').value = TOUR_LEN[$('toTour').value] || 'full'; }
   function tourQuote() {
     var guests = +$('toGuests').value; if (guests > MAX_PAX) return null;
     var len = TOUR[$('toLen').value], extra = Math.max(0, guests - TOUR.included);
@@ -111,7 +109,7 @@
   function updateTourOut() {
     var out = $('fareOut'), q = tourQuote();
     if (q) { out.innerHTML = '<span>Tour price</span><b>EC$' + q.ec + '</b><em>US$' + q.us + '</em>'; tourBtn.textContent = 'Book this tour'; }
-    else { out.innerHTML = 'One vehicle takes up to 5 people. For larger groups, send us your tour details and we will reply with a quote. <a href="#" class="mail-quote">Prefer email? Send it by email instead.</a>'; tourBtn.textContent = 'Request a quote'; }
+    else { out.innerHTML = 'One vehicle takes up to 5 people. For larger groups, send us your tour details and we will reply with a quote.'; tourBtn.textContent = 'Request a quote'; }
   }
   $('toTour').addEventListener('change', syncTourLen); syncTourLen();
   ['toTour', 'toLen', 'toGuests'].forEach(function (id) { $(id).addEventListener('change', updateFareOut); });
@@ -307,11 +305,14 @@
   }
   // "Send it by email instead" link in quote messages
   $('fareOut').addEventListener('click', function (e) {
-    var a = e.target.closest('.mail-quote'); if (!a) return; e.preventDefault();
-    var tab = document.querySelector('[data-tab][aria-selected="true"]').dataset.tab;
-    var lines = bookingLines(tab, formVal, formWhen);
-    location.href = 'mailto:wjrtt@outlook.com?subject=' + encodeURIComponent('Quote request: ' + (tab === 'tours' ? 'island tour' : 'taxi')) + '&body=' + encodeURIComponent(lines.join('\n') + '\n\nName:\nPhone or WhatsApp:\n');
+    if (!e.target.closest('.mail-quote')) return; e.preventDefault(); emailRequest();
   });
+  function emailRequest() {
+    var tab = document.querySelector('[data-tab][aria-selected="true"]').dataset.tab, lines = bookingLines(tab, formVal, formWhen);
+    var isQuote = /quote/.test(lines[0]), what = tab === 'tours' ? 'island tour' : tab === 'rentals' ? 'car rental' : 'taxi';
+    location.href = 'mailto:wjrtt@outlook.com?subject=' + encodeURIComponent((isQuote ? 'Quote request: ' : 'Booking request: ') + what) + '&body=' + encodeURIComponent(lines.join('\n') + '\n\nName:\nPhone or WhatsApp:\n');
+  }
+  $('mailBtn').addEventListener('click', emailRequest);
   function sendWA(lines) { window.open('https://wa.me/' + WA + '?text=' + encodeURIComponent(lines.join('\n')), '_blank', 'noopener'); }
   updateFareOut();
 
