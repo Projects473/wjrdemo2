@@ -14,7 +14,7 @@
   // Wayne's list gives fares from 6 pickup areas (columns) to every destination (rows). The same fare
   // applies in reverse, so any listed place can be the pickup or the drop-off. "MBIA airport / Royalton"
   // is split so the EC$10 airport pickup charge only applies to pickups at the airport itself.
-  var AIRPORT_FEE = 10, EXTRA_PAX_FEE = 10, PAX_INCLUDED = 2, OTHER = 'other';
+  var AIRPORT_FEE = 10, EXTRA_PAX_FEE = 10, PAX_INCLUDED = 2, MAX_PAX = 5, OTHER = 'other';   // one vehicle holds 5; bigger groups get a quote
   var fromSel = $('txFrom'), toSel = $('txTo'), paxSel = $('txPax');
   // destinations that sit inside a pickup area use that area's column too
   var AREA_OF = { 'MBIA (Airport)': 4, 'Royalton Hotel': 4, "St. George's": 5, 'Secret Harbour': 1, 'Mahogany Run': 2, 'Calliste / Lavo Lanes': 3, 'Umbrellas': 0, 'Siesta Hotel': 0, 'Real Value IGA Supermarket': 0 };
@@ -44,6 +44,7 @@
   // Price for a trip: listed rate (1 to 2 passengers) + EC$10 airport pickup + EC$10 per extra passenger
   function quote(f, t, pax) {
     if (f === OTHER || t === OTHER || f === '' || t === '') return { base: null };
+    if (pax > MAX_PAX) return { base: null, big: true };
     var a = PLACES[f], b = PLACES[t], base = null;
     if (f === t) base = 0;
     else if (a.col !== null && b.row !== null) base = F.rows[b.row][2][a.col];
@@ -77,7 +78,7 @@
     var q = quote(fromSel.value, toSel.value, +paxSel.value);
     if (q.ec) { out.innerHTML = '<span>Your rate</span><b>EC$' + q.ec + '</b><em>US$' + q.us + '</em>'; rideBtn.textContent = 'Book this ride'; }
     else {
-      out.textContent = q.base === 0 ? 'Same area: message us for the rate' : (other ? 'Not on our list? Send us the trip and WJR Taxi Tours & Auto Rentals will reply with a quote on WhatsApp.' : 'This trip is not on our rate list yet. Send it to us for a quote.');
+      out.innerHTML = (q.big ? 'One vehicle takes up to 5 passengers. For larger groups, send us the trip and we will reply with a quote.' : q.base === 0 ? 'Same area: send us the trip for a quote.' : (other ? 'Not on our list? Send us the trip and WJR Taxi Tours &amp; Auto Rentals will reply with a quote.' : 'This trip is not on our rate list yet. Send it to us for a quote.')) + ' <a href="#" class="mail-quote">Prefer email? Send it by email instead.</a>';
       rideBtn.textContent = 'Request a quote';
     }
   }
@@ -96,14 +97,23 @@
 
   // ---------- Tour prices: half day or whole day for 1 to 2 people, plus EC$26 / US$10 per extra person ----------
   var TOUR = { half: { label: 'Half day (4 hours)', ec: 370, us: 140 }, full: { label: 'Whole day (7 hours)', ec: 650, us: 245 }, extraEc: 26, extraUs: 10, included: 2 };
+  var WHOLE_DAY_ONLY = ['Waterfalls', 'Chocolate Rum', 'Round de Island'], tourBtn = document.querySelector('#p-tours button[type="submit"]');
+  function syncTourLen() {
+    var only = WHOLE_DAY_ONLY.indexOf($('toTour').value) >= 0, half = $('toLen').querySelector('option[value="half"]');
+    half.disabled = only; half.textContent = only ? 'Half day (not offered)' : 'Half day, 4 hrs';
+    if (only) $('toLen').value = 'full';
+  }
   function tourQuote() {
-        var len = TOUR[$('toLen').value], extra = Math.max(0, +$('toGuests').value - TOUR.included);
+    var guests = +$('toGuests').value; if (guests > MAX_PAX) return null;
+    var len = TOUR[$('toLen').value], extra = Math.max(0, guests - TOUR.included);
     return { ec: len.ec + extra * TOUR.extraEc, us: len.us + extra * TOUR.extraUs, len: len };
   }
   function updateTourOut() {
     var out = $('fareOut'), q = tourQuote();
-    out.innerHTML = '<span>Tour price</span><b>EC$' + q.ec + '</b><em>US$' + q.us + '</em>';
+    if (q) { out.innerHTML = '<span>Tour price</span><b>EC$' + q.ec + '</b><em>US$' + q.us + '</em>'; tourBtn.textContent = 'Book this tour'; }
+    else { out.innerHTML = 'One vehicle takes up to 5 people. For larger groups, send us your tour details and we will reply with a quote. <a href="#" class="mail-quote">Prefer email? Send it by email instead.</a>'; tourBtn.textContent = 'Request a quote'; }
   }
+  $('toTour').addEventListener('change', syncTourLen); syncTourLen();
   ['toTour', 'toLen', 'toGuests'].forEach(function (id) { $(id).addEventListener('change', updateFareOut); });
 
   // ---------- Rentals: rates, booked dates and calendar ----------
@@ -264,17 +274,21 @@
     window.addEventListener('resize', upd); upd();
   })();
 
+  function formVal(id) { return $(id).value.trim() || '-'; }
+  function formWhen(id) {
+    var val = $(id).value; if (!val) return '-';
+    var d = new Date(val.length === 10 ? val + 'T00:00' : val);
+    var o = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' };
+    if (val.length > 10) { o.hour = 'numeric'; o.minute = '2-digit'; o.hour12 = true; }
+    return d.toLocaleString('en-GB', o);
+  }
   $('booker').addEventListener('submit', function (e) {
     e.preventDefault();
-    var tab = document.querySelector('[data-tab][aria-selected="true"]').dataset.tab, lines;
-    var v = function (id) { return $(id).value.trim() || '-'; };
-    var when = function (id) {
-      var val = $(id).value; if (!val) return '-';
-      var d = new Date(val.length === 10 ? val + 'T00:00' : val);
-      var o = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' };
-      if (val.length > 10) { o.hour = 'numeric'; o.minute = '2-digit'; o.hour12 = true; }
-      return d.toLocaleString('en-GB', o);
-    };
+    var tab = document.querySelector('[data-tab][aria-selected="true"]').dataset.tab;
+    sendWA(bookingLines(tab, formVal, formWhen));
+  });
+  function bookingLines(tab, v, when) {
+    var lines;
     if (tab === 'taxi') {
       var q = quote(fromSel.value, toSel.value, +paxSel.value);
       lines = [q.ec ? 'Hello WJR Taxi Tours & Auto Rentals, I would like to book a taxi.' : 'Hello WJR Taxi Tours & Auto Rentals, could you send me a quote for a taxi?', 'From: ' + placeName(fromSel, fromOther), 'To: ' + placeName(toSel, toOther), 'Passengers: ' + paxSel.value];
@@ -282,14 +296,21 @@
       lines.push('Pickup: ' + when('txWhen'));
     } else if (tab === 'tours') {
       var tq = tourQuote();
-      lines = ['Hello WJR Taxi Tours & Auto Rentals, I would like to book a tour.', 'Tour: ' + v('toTour'), 'Length: ' + TOUR[$('toLen').value].label, 'Date: ' + when('toDate'), 'Pickup from: ' + v('toPickup'), 'Guests: ' + $('toGuests').value];
+      lines = [tq ? 'Hello WJR Taxi Tours & Auto Rentals, I would like to book a tour.' : 'Hello WJR Taxi Tours & Auto Rentals, could you send me a quote for a tour?', 'Tour: ' + v('toTour'), 'Length: ' + TOUR[$('toLen').value].label, 'Date: ' + when('toDate'), 'Pickup from: ' + v('toPickup'), 'Guests: ' + $('toGuests').value];
       if (tq) lines.push('Price shown: EC$' + tq.ec + ' / US$' + tq.us);
     } else {
       lines = ['Hello WJR Taxi Tours & Auto Rentals, I would like to rent a car.', 'Vehicle: ' + v('reCar'), 'Pick-up date: ' + when('reStart'), 'Return date: ' + when('reEnd'), 'Pickup location: ' + v('rePlace')];
       var rc = carByOption($('reCar').value);
       if (rc && $('reStart').value && $('reEnd').value && $('reEnd').value >= $('reStart').value) { var rq = rentalQuote(rc, dnum($('reStart').value), dnum($('reEnd').value)); lines.push('Rental: ' + rq.days + ' day' + (rq.days > 1 ? 's' : '') + ' at EC$' + rq.rate + ' per day', 'Estimated total: EC$' + rq.total); }
     }
-    sendWA(lines);
+    return lines;
+  }
+  // "Send it by email instead" link in quote messages
+  $('fareOut').addEventListener('click', function (e) {
+    var a = e.target.closest('.mail-quote'); if (!a) return; e.preventDefault();
+    var tab = document.querySelector('[data-tab][aria-selected="true"]').dataset.tab;
+    var lines = bookingLines(tab, formVal, formWhen);
+    location.href = 'mailto:wjrtt@outlook.com?subject=' + encodeURIComponent('Quote request: ' + (tab === 'tours' ? 'island tour' : 'taxi')) + '&body=' + encodeURIComponent(lines.join('\n') + '\n\nName:\nPhone or WhatsApp:\n');
   });
   function sendWA(lines) { window.open('https://wa.me/' + WA + '?text=' + encodeURIComponent(lines.join('\n')), '_blank', 'noopener'); }
   updateFareOut();
@@ -298,7 +319,7 @@
     b.addEventListener('click', function () { $('reCar').value = b.dataset.car; showTab('rentals'); $('book').scrollIntoView({ behavior: 'smooth' }); });
   });
   document.querySelectorAll('[data-tour]').forEach(function (a) {
-    a.addEventListener('click', function () { $('toTour').value = a.dataset.tour; showTab('tours'); });
+    a.addEventListener('click', function () { $('toTour').value = a.dataset.tour; syncTourLen(); showTab('tours'); });
   });
 
   var now = new Date(); now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
