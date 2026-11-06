@@ -476,7 +476,7 @@ input[type=file]{width:100%;padding:10px;border:1.5px dashed var(--line);border-
     var name = (bk.customer || '').split(' ')[0] || 'there';
     var subject = 'Booking confirmed: ' + c.name + ', ' + nice(bk.start) + ' to ' + nice(bk.end) + ' | WJR Taxi Tours & Auto Rentals';
     var rows = [['Vehicle', c.name], ['Pick-up', longDate(bk.start)], ['Return', longDate(bk.end)], ['Rental', days + ' day' + (days > 1 ? 's' : '') + ' at EC$' + rate + ' per day'], ['Estimated total', 'EC$' + (days * rate)]];
-    var terms = ["Bring your driver's licence and a photo ID.", 'A security deposit is paid by cash or card before pickup and returned when the car comes back in the same condition, less anything owed.', 'The car comes with a full tank. Please return it at the same level.', 'Late returns are EC$40 per day unless agreed in advance.'];
+    var terms = ["Bring your driver's licence and a photo ID.", 'All payments, including the rental charges and the security deposit, are made by cash or card at or before pickup. The deposit is returned when the car comes back in the same condition, less anything owed.', 'The car comes with a full tank. Please return it at the same level.', 'Late returns are EC$40 per day unless agreed in advance.'];
     var agreement = abs(F.agreement || 'files/WJR-Rental-Agreement.pdf');
     var text = 'Hello ' + name + ',\n\nThank you for choosing WJR Taxi Tours & Auto Rentals. Your car rental is confirmed:\n\n' +
       rows.map(function (r) { return r[0] + ': ' + r[1]; }).join('\n') +

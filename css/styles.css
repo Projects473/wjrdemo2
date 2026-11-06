@@ -383,8 +383,9 @@ html[data-theme="light"] .cal-wrap{box-shadow:0 14px 34px rgba(30,35,40,.07)}
 @media (max-width:640px){.cal-wrap{padding:18px 14px}.cal-grid{grid-template-columns:1fr}.cal-grid .cal-month:nth-child(2){display:none}.cal-head h3{font-size:28px}}
 
 /* Tour prices and booking */
-#p-tours{grid-template-columns:repeat(5,minmax(0,1fr))}
-#p-tours .btn{grid-column:1/-1}
+#p-tours,#p-taxi{grid-template-columns:repeat(5,minmax(0,1fr))}
+#p-tours .btn,#p-taxi .btn,#p-taxi .stop-where{grid-column:1/-1}
+#p-taxi .stop-where[hidden]{display:none}
 .tour .meta{margin-bottom:16px}
 .tour .row{margin-top:auto}
 .tour h3,.tour .meta{text-align:center}
@@ -405,9 +406,9 @@ html[data-theme="light"] .cal-wrap{box-shadow:0 14px 34px rgba(30,35,40,.07)}
 .tour-prices p{margin:0;color:var(--mute);font-size:14.5px}
 .survey{display:block;margin-top:16px;font-weight:700;font-size:14px;color:var(--txt);text-underline-offset:4px}
 html[data-theme="light"] .tour-prices strong{color:var(--sky-t)}
-@media (max-width:1180px){#p-tours{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:1180px){#p-tours,#p-taxi{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:980px){.tour-prices{grid-template-columns:1fr 1fr}.tour-prices p{grid-column:1/-1}}
-@media (max-width:640px){#p-tours{grid-template-columns:1fr}}
+@media (max-width:640px){#p-tours,#p-taxi{grid-template-columns:1fr}}
 
 /* Light version (white instead of charcoal), switched with the toggle in the menu bar */
 .theme-btn{width:42px;height:42px;border-radius:4px;border:0;cursor:pointer;background:var(--ink);color:#fff;display:grid;place-items:center;flex:none;transition:transform .3s,background .3s}
@@ -457,9 +458,9 @@ html[data-theme="light"] .road::before{background-image:url("data:image/svg+xml;
 .sky-night i{position:absolute;border-radius:50%;background:#FFF6D8;box-shadow:0 0 6px rgba(255,246,216,.8);animation:twinkle 3.2s ease-in-out infinite}
 @keyframes twinkle{0%,100%{opacity:.25;transform:scale(.7)}50%{opacity:1;transform:scale(1.15)}}
 .crescent{position:absolute;right:9%;top:6%;width:54px;height:54px;border-radius:50%;box-shadow:14px -8px 0 0 #FFF1C9;filter:drop-shadow(0 0 14px rgba(255,241,201,.55));transform:rotate(-18deg)}
-.taxi .beam{position:absolute;left:90%;top:38%;width:170px;height:60px;background:linear-gradient(90deg,rgba(255,236,170,.6),rgba(255,236,170,0));clip-path:polygon(0 38%,100% 0,100% 100%,0 62%);filter:blur(1.5px)}
-.taxi .tail{position:absolute;left:1%;top:28%;width:16px;height:22px;border-radius:50%;background:radial-gradient(rgba(255,80,60,.9),rgba(255,80,60,0) 70%)}
-.taxi .head{position:absolute;left:86%;top:44%;width:22px;height:16px;border-radius:50%;background:radial-gradient(rgba(255,244,200,1),rgba(255,244,200,0) 70%)}
+.taxi .beam{position:absolute;left:90%;top:42%;width:170px;height:60px;background:linear-gradient(90deg,rgba(255,236,170,.6),rgba(255,236,170,0));clip-path:polygon(0 38%,100% 0,100% 100%,0 62%);filter:blur(1.5px)}
+.taxi .tail{position:absolute;left:4%;top:37%;width:16px;height:22px;border-radius:50%;background:radial-gradient(rgba(255,80,60,.9),rgba(255,80,60,0) 70%)}
+.taxi .head{position:absolute;left:85%;top:47%;width:22px;height:16px;border-radius:50%;background:radial-gradient(rgba(255,244,200,1),rgba(255,244,200,0) 70%)}
 html[data-theme="light"] .sky-night,html[data-theme="light"] .taxi .beam,html[data-theme="light"] .taxi .tail,html[data-theme="light"] .taxi .head{display:none}
 
 .mbar{display:none}
@@ -707,3 +708,6 @@ html[data-theme="light"] .lang-btn{background:#fff;color:var(--ink)}
 body{top:0!important}
 .goog-text-highlight{background:none!important;box-shadow:none!important}
 @media (max-width:640px){.lang-btn{padding:0 9px}.lang-btn span{display:none}}
+
+/* Rental warning link to the calendar */
+.fare-out .cal-link{color:inherit;font-weight:800;text-decoration:underline;text-underline-offset:3px}

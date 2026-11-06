@@ -14,7 +14,7 @@
   // Wayne's list gives fares from 6 pickup areas (columns) to every destination (rows). The same fare
   // applies in reverse, so any listed place can be the pickup or the drop-off. "MBIA airport / Royalton"
   // is split so the EC$10 airport pickup charge only applies to pickups at the airport itself.
-  var AIRPORT_FEE = 10, EXTRA_PAX_FEE = 10, PAX_INCLUDED = 2, MAX_PAX = 5, OTHER = 'other';   // one vehicle holds 5; bigger groups get a quote
+  var AIRPORT_FEE = 10, EXTRA_PAX_FEE = 10, PAX_INCLUDED = 2, MAX_PAX = 5, STOP_FEE = 20, OTHER = 'other';   // EC$20 for each stop on the way   // one vehicle holds 5; bigger groups get a quote
   var fromSel = $('txFrom'), toSel = $('txTo'), paxSel = $('txPax');
   // destinations that sit inside a pickup area use that area's column too
   var AREA_OF = { 'MBIA (Airport)': 4, 'Royalton Hotel': 4, "St. George's": 5, 'Secret Harbour': 1, 'Mahogany Run': 2, 'Calliste / Lavo Lanes': 3, 'Umbrellas': 0, 'Siesta Hotel': 0, 'Real Value IGA Supermarket': 0 };
@@ -50,9 +50,9 @@
     else if (a.col !== null && b.row !== null) base = F.rows[b.row][2][a.col];
     else if (b.col !== null && a.row !== null) base = F.rows[a.row][2][b.col];
     if (!base) return { base: base };
-    var air = a.airport ? AIRPORT_FEE : 0, extra = Math.max(0, pax - PAX_INCLUDED) * EXTRA_PAX_FEE;
-    var ec = base[0] + air + extra;
-    return { base: base, ec: ec, us: (air || extra) ? usFor(ec) : base[1], air: air, extra: extra, extraPax: Math.max(0, pax - PAX_INCLUDED) };
+    var air = a.airport ? AIRPORT_FEE : 0, extra = Math.max(0, pax - PAX_INCLUDED) * EXTRA_PAX_FEE, stops = (+($('txStops') || {}).value || 0) * STOP_FEE;
+    var ec = base[0] + air + extra + stops;
+    return { base: base, ec: ec, us: (air || extra || stops) ? usFor(ec) : base[1], air: air, extra: extra, stops: stops, extraPax: Math.max(0, pax - PAX_INCLUDED) };
   }
   function quoteText(q) {
     if (q.base === 0) return 'Same area: ask for the rate';
@@ -79,11 +79,13 @@
     var q = quote(fromSel.value, toSel.value, +paxSel.value);
     if (q.ec) { out.innerHTML = '<span>Your rate</span><b>EC$' + q.ec + '</b><em>US$' + q.us + '</em>'; rideBtn.textContent = 'Book this ride'; }
     else {
-      out.innerHTML = (q.big ? 'One vehicle takes up to 5 passengers. For larger groups, send us the trip and we will reply with a quote.' : q.base === 0 ? 'Same area: send us the trip for a quote.' : (other ? 'Not on our list? Send us the trip and WJR Taxi Tours &amp; Auto Rentals will reply with a quote.' : 'This trip is not on our rate list yet. Send it to us for a quote.')) + '';
+      out.innerHTML = (q.big ? 'For groups larger than 5 persons, send us your trip details and we will reply with a quote.' : q.base === 0 ? 'Same area: send us the trip for a quote.' : (other ? 'Not on our list? Send us the trip and WJR Taxi Tours &amp; Auto Rentals will reply with a quote.' : 'This trip is not on our rate list yet. Send it to us for a quote.')) + '';
       rideBtn.textContent = 'Request a quote';
     }
   }
   [fromSel, toSel, paxSel].forEach(function (el) { el.addEventListener('change', updateFareOut); });
+  // Stops on the way (EC$20 each): show the "where" box when at least one stop is chosen
+  $('txStops').addEventListener('change', function () { $('stopWhere').hidden = $('txStops').value === '0'; updateFareOut(); if (!$('stopWhere').hidden) $('txStopWhere').focus(); });
 
   document.querySelectorAll('[data-dest]').forEach(function (card) {
     var i = rowIndex(card.dataset.dest); if (i < 0) return;
@@ -109,7 +111,7 @@
   function updateTourOut() {
     var out = $('fareOut'), q = tourQuote();
     if (q) { out.innerHTML = '<span>Tour price</span><b>EC$' + q.ec + '</b><em>US$' + q.us + '</em>'; tourBtn.textContent = 'Book this tour'; }
-    else { out.innerHTML = 'One vehicle takes up to 5 people. For larger groups, send us your tour details and we will reply with a quote.'; tourBtn.textContent = 'Request a quote'; }
+    else { out.innerHTML = 'For groups larger than 5 persons, send us your tour details and we will reply with a quote.'; tourBtn.textContent = 'Request a quote'; }
   }
   $('toTour').addEventListener('change', syncTourLen); syncTourLen();
   ['toTour', 'toLen', 'toGuests'].forEach(function (id) { $(id).addEventListener('change', updateFareOut); });
@@ -137,11 +139,11 @@
     if (b < a) { out.textContent = 'The return date is before the pick-up date.'; return; }
     if (!car) {
       var free = R.cars.filter(function (c) { return rangeFree(c.id, a, b); }).map(function (c) { return c.name; });
-      out.innerHTML = free.length ? '<span>Free on these dates</span><em>' + free.join(', ') + '</em><small>Choose a car to see the total.</small>' : '<span class="warn">All cars are booked on some of these dates.</span>';
+      out.innerHTML = free.length ? '<span>Free on these dates</span><em>' + free.join(', ') + '</em><small>Choose a car to see the total.</small>' : '<span class="warn">All cars are booked on some of these dates. <a href="#availability" class="cal-link" data-n="' + a + '">See the availability calendar below</a>.</span>';
       return;
     }
     var q = rentalQuote(car, a, b);
-    var warn = rangeFree(car.id, a, b) ? '' : '<small class="warn">This car is booked on some of these dates. See the availability calendar below.</small>';
+    var warn = rangeFree(car.id, a, b) ? '' : '<small class="warn">This car is booked on some of these dates. <a href="#availability" class="cal-link" data-car="' + car.id + '" data-n="' + a + '">See the availability calendar below</a>.</small>';
     out.innerHTML = '<span>Estimated total</span><b>EC$' + q.total + '</b><em>' + q.days + ' day' + (q.days > 1 ? 's' : '') + ' × EC$' + q.rate + '</em><small>' + (q.weekly ? 'Weekly rate (7 days or more).' : 'Daily rate (less than 7 days). 7 days or more is EC$' + car.weekly + ' per day.') + '</small>' + warn;
   }
   ['reCar', 'reStart', 'reEnd'].forEach(function (id) { $(id).addEventListener('change', function () { if (currentTab === 'rentals') updateRentalOut(); if (id === 'reCar') { var c = carByOption(this.value); if (c) calSetCar(c.id); } }); });
@@ -185,6 +187,13 @@
     }
     return h + '</div></div>';
   }
+  // "See the availability calendar below" link: show that car and month, then jump to the calendar
+  document.addEventListener('click', function (e) {
+    var l = e.target.closest('.cal-link'); if (!l) return; e.preventDefault();
+    if (l.dataset.car) calSetCar(l.dataset.car);
+    if (l.dataset.n) { var d = new Date(+l.dataset.n * DAY); cal.month = Math.max(0, Math.min(MAX_MONTHS - 2, (d.getUTCFullYear() - firstMonth.y) * 12 + d.getUTCMonth() - firstMonth.m)); renderCal(); }
+    $('availability').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
   function renderCal() {
     var y = firstMonth.y, m = firstMonth.m + cal.month, html = '';
     for (var k = 0; k < 2; k++) { var mm = m + k; html += monthHTML(y + Math.floor(mm / 12), ((mm % 12) + 12) % 12); }
@@ -290,6 +299,7 @@
     if (tab === 'taxi') {
       var q = quote(fromSel.value, toSel.value, +paxSel.value);
       lines = [q.ec ? 'Hello WJR Taxi Tours & Auto Rentals, I would like to book a taxi.' : 'Hello WJR Taxi Tours & Auto Rentals, could you send me a quote for a taxi?', 'From: ' + placeName(fromSel, fromOther), 'To: ' + placeName(toSel, toOther), 'Passengers: ' + paxSel.value];
+      if ($('txStops').value !== '0') lines.push('Stops on the way: ' + $('txStops').value + ($('txStopWhere').value.trim() ? ' (' + $('txStopWhere').value.trim() + ')' : ''));
       if (q.ec) lines.push('Rate shown: ' + quoteText(q));
       lines.push('Pickup: ' + when('txWhen'));
     } else if (tab === 'tours') {
