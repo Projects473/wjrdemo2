@@ -29,7 +29,7 @@
       try { localStorage.setItem('wjr-lang', l); } catch (err) {}
       location.reload();
     });
-    if (cur !== 'en') {
+    if (cur !== 'en' && !/[?&]wjr-edit/.test(location.search)) {
       var holder = document.createElement('div'); holder.id = 'google_translate_element'; document.body.appendChild(holder);
       window.googleTranslateElementInit = function () {
         new google.translate.TranslateElement({ pageLanguage: 'en', includedLanguages: 'es,fr,de,it,pt,nl,zh-CN', autoDisplay: false }, 'google_translate_element');

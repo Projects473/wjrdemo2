@@ -111,6 +111,23 @@ html,body{overflow-x:hidden}
 .gal figcaption{padding:8px;font-size:12.5px;line-height:1.35;flex:1}
 .gal .del{margin:0 8px 8px;border:1.5px solid var(--line);background:#fff;border-radius:4px;padding:7px;font-weight:800;font-size:12px;cursor:pointer}
 .gal .del.armed{background:var(--red);border-color:var(--red);color:#fff}
+.keep{margin:12px 0 0;justify-content:center;font-size:13.5px}
+.editcard .pages{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.editcard{margin-bottom:22px}
+.editor{position:fixed;inset:0;z-index:200;background:#fff;display:flex;flex-direction:column}
+.editor[hidden]{display:none}
+.ebar{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--line);background:#fff;flex-wrap:wrap}
+.ebar b{font-family:var(--head);font-size:24px;letter-spacing:.03em;font-weight:400}
+.ebar .sp{flex:1}
+.ehelp{padding:8px 14px;background:var(--soft);font-size:13px;color:var(--mute);border-bottom:1px solid var(--line)}
+.ehelp.ok{background:#E6F5EC;color:#1D6B3E}.ehelp.err{background:#FDECE8;color:#9B2C17}
+.bgstrip{display:flex;gap:10px;padding:10px 14px;overflow-x:auto;border-bottom:1px solid var(--line);background:#fff}
+.bgstrip button{flex:none;width:120px;border:2px solid var(--line);border-radius:4px;padding:0;background:#eef1f4;cursor:pointer;font:700 11px var(--sans);color:var(--ink)}
+.bgstrip button img{display:block;width:100%;height:68px;object-fit:cover}
+.bgstrip button span{display:block;padding:4px}
+.bgstrip button.changed{border-color:var(--ok)}
+#edFrame{flex:1;width:100%;border:0;background:#fff}
+@media (max-width:560px){.ebar{gap:6px;padding:8px 10px}.ebar b{font-size:20px;width:100%}.ebar .status{font-size:12px}}
 input[type=file]{width:100%;padding:10px;border:1.5px dashed var(--line);border-radius:4px;background:#fff}
 </style>
 </head>
@@ -119,7 +136,7 @@ input[type=file]{width:100%;padding:10px;border:1.5px dashed var(--line);border-
 <header class="top">
   <div class="in">
     <img src="assets/wjr-logo-sm.png" alt="WJR Taxi Tours &amp; Auto Rentals">
-    <div><h1>Rental bookings</h1><small>WJR Taxi Tours &amp; Auto Rentals</small></div>
+    <div><h1>Website admin</h1><small>WJR Taxi Tours &amp; Auto Rentals</small></div>
     <div class="sp"></div>
     <button class="btn btn-line btn-sm" id="refresh" hidden>Refresh</button>
     <button class="btn btn-sm" id="logout" hidden>Lock</button>
@@ -131,7 +148,7 @@ input[type=file]{width:100%;padding:10px;border:1.5px dashed var(--line);border-
   <section class="login card" id="setup" hidden>
     <img src="assets/wjr-logo-sm.png" alt="">
     <h2>Set up this device</h2>
-    <p>Paste the access key from Savvy Tech. This is only needed once on each phone or computer.</p>
+    <p>Paste the access key from Savvy Tech. This is only needed the very first time. After that you can sign in on any phone or computer with just your password.</p>
     <form id="setupForm">
       <input class="key" id="token" type="password" autocomplete="off" spellcheck="false" placeholder="github_pat_..." aria-label="Access key">
       <button class="btn btn-peach" type="submit">Connect</button>
@@ -142,18 +159,30 @@ input[type=file]{width:100%;padding:10px;border:1.5px dashed var(--line);border-
   <!-- Password -->
   <section class="login card" id="login" hidden>
     <img src="assets/wjr-logo-sm.png" alt="">
-    <h2 id="loginTitle">Bookings</h2>
-    <p id="loginText">Enter your password to manage rental bookings.</p>
+    <h2 id="loginTitle">Sign in</h2>
+    <p id="loginText">Enter your password to manage bookings, photos and website text.</p>
     <form id="loginForm">
       <input class="pin" id="pin" type="password" autocomplete="current-password" placeholder="Password" aria-label="Password">
       <input class="pin" id="pin2" type="password" autocomplete="new-password" placeholder="Repeat password" aria-label="Repeat password" hidden>
-      <button class="btn btn-peach" type="submit" id="loginBtn">Open bookings</button>
+      <label class="check keep" id="keepRow"><input type="checkbox" id="keep"> Keep me signed in on this device</label>
+      <button class="btn btn-peach" type="submit" id="loginBtn">Sign in</button>
     </form>
     <div class="msg" id="loginMsg" role="status"></div>
     <button class="linkbtn" type="button" id="forget">Disconnect this device</button>
   </section>
 
   <section id="app" hidden>
+    <section class="card list editcard" id="editCard">
+      <div class="lh"><h3>Edit the website</h3></div>
+      <p class="status">Change the words and photos on any page. Pick a page, tap any text with a dotted outline to type over it, tap a photo to replace it, then press <b>Publish</b>.</p>
+      <div class="pages" id="pages">
+        <button type="button" class="btn btn-line" data-page="index.html">Home page</button>
+        <button type="button" class="btn btn-line" data-page="about/index.html">About</button>
+        <button type="button" class="btn btn-line" data-page="grenada-airport-taxi/index.html">Airport taxi</button>
+        <button type="button" class="btn btn-line" data-page="grenada-island-tours/index.html">Island tours</button>
+        <button type="button" class="btn btn-line" data-page="grenada-car-rental/index.html">Car rental</button>
+      </div>
+    </section>
     <div class="cars" id="cars" role="group" aria-label="Choose a car"></div>
     <div class="grid">
       <div class="card">
@@ -215,6 +244,22 @@ input[type=file]{width:100%;padding:10px;border:1.5px dashed var(--line);border-
   </section>
 </main>
 
+<div class="editor" id="editor" hidden>
+  <div class="ebar">
+    <b id="edPage">Home page</b>
+    <span class="status" id="edCount">No changes yet</span>
+    <div class="sp"></div>
+    <button type="button" class="btn btn-line btn-sm" id="edBg" hidden>Background photos</button>
+    <button type="button" class="btn btn-line btn-sm" id="edUndo" disabled>Undo all</button>
+    <button type="button" class="btn btn-peach btn-sm" id="edSave" disabled>Publish</button>
+    <button type="button" class="btn btn-sm" id="edClose">Close</button>
+  </div>
+  <div class="ehelp" id="edHelp">Tap any text with a dotted outline to change it. Tap a photo to replace it. Prices in the booking calculator are set by Savvy Tech.</div>
+  <div class="bgstrip" id="edStrip" hidden></div>
+  <iframe id="edFrame" title="Website page being edited"></iframe>
+  <input type="file" id="edFile" accept="image/*" hidden>
+</div>
+
 <script src="js/rentals.js"></script>
 <script>
 (function () {
@@ -223,11 +268,12 @@ input[type=file]{width:100%;padding:10px;border:1.5px dashed var(--line);border-
   var API = (G.apiBase || 'https://api.github.com') + '/repos/' + G.owner + '/' + G.repo + '/contents/' + FILE;
   var $ = function (id) { return document.getElementById(id); };
   var DAY = 86400000, ITER = 310000;
-  var token = '', key = null, file = null, sha = null, bookings = [], car = R.cars[0].id;
+  var token = '', access = null, key = null, file = null, sha = null, bookings = [], car = R.cars[0].id;
   var selStart = null, selEnd = null, monthOffset = 0, filter = 'car', delArm = null, forceNext = false;
   var enc = new TextEncoder(), dec = new TextDecoder();
 
   // ---------- helpers ----------
+  function ss(k, v) { try { if (v === undefined) return sessionStorage.getItem(k); if (v === null) sessionStorage.removeItem(k); else sessionStorage.setItem(k, v); } catch (e) { return null; } }
   function ls(k, v) { try { if (v === undefined) return localStorage.getItem(k); if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) { return null; } }
   function b64(u8) { var s = ''; for (var i = 0; i < u8.length; i++) s += String.fromCharCode(u8[i]); return btoa(s); }
   function unb64(s) { var bin = atob(s), u = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return u; }
@@ -299,24 +345,56 @@ input[type=file]{width:100%;padding:10px;border:1.5px dashed var(--line);border-
   function fail(e, el) {
     var t = e.message === 'auth' ? 'The access key was refused. It may have expired; ask Savvy Tech for a new one.' : (e.message === 'Failed to fetch' ? 'No connection. Check the internet and try again.' : e.message);
     el.className = 'msg err'; el.textContent = t;
-    if (e.message === 'auth') { ls('wjr-gh-token', null); }
+    if (e.message === 'auth') { ls('wjr-gh-token', null); ss('wjr-gh-token', null); }
   }
 
   // ---------- setup, password and start ----------
+  // The access key is also saved on GitHub, locked with the password (data/access.json),
+  // so the password alone opens the admin on any phone or computer.
+  var ACCESS = 'data/access.json';
+  function fetchAccess() {
+    return fetch(ACCESS + '?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; })
+      .catch(function () { return null; })
+      .then(function (a) {
+        if (a && a.salt) return a;
+        return fetch('https://api.github.com/repos/' + G.owner + '/' + G.repo + '/contents/' + ACCESS + '?ref=' + encodeURIComponent(G.branch || 'main'), { cache: 'no-store' })
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (j) { return j ? JSON.parse(dec.decode(unb64(j.content.replace(/\s/g, '')))) : null; })
+          .catch(function () { return null; });
+      });
+  }
+  function saveAccess(pin) {
+    var salt = b64(crypto.getRandomValues(new Uint8Array(16)));
+    return deriveKey(pin, salt).then(function (k) { return seal(k, { t: token }); }).then(function (sealed) {
+      var data = { note: 'Locked sign-in key for the WJR Taxi Tours & Auto Rentals admin page. It only opens with the admin password.', salt: salt, key: sealed, updated: new Date().toISOString() };
+      return ghGet(ACCESS).then(function (j) { return ghPut(ACCESS, b64(enc.encode(JSON.stringify(data, null, 2) + '\n')), j && j.sha, 'Update admin sign-in'); });
+    }).then(function () { access = null; }).catch(function () {});
+  }
+  function loginScreen(first) {
+    $('pin2').hidden = !first;
+    $('keepRow').hidden = first || !!ls('wjr-gh-token');
+    $('loginTitle').textContent = first ? 'Create a password' : 'Sign in';
+    $('loginText').textContent = first ? 'Choose a password of at least 8 characters, for example three words. It locks customer details and lets you sign in from any phone or computer. Keep it safe: it cannot be recovered.' : 'Enter your password to manage bookings, photos and website text.';
+    $('loginBtn').textContent = first ? 'Create password' : 'Sign in';
+    $('pin').focus();
+  }
   function start() {
-    token = ls('wjr-gh-token') || '';
+    token = ls('wjr-gh-token') || ss('wjr-gh-token') || '';
     var h = location.hash.match(/key=([^&]+)/);
     if (h) { token = decodeURIComponent(h[1]); ls('wjr-gh-token', token); history.replaceState(null, '', location.pathname); }
-    if (!token) { show('setup'); return; }
-    show('login'); $('loginMsg').textContent = 'Connecting...';
+    if (!token) {
+      show('login'); $('loginMsg').className = 'msg'; $('loginMsg').textContent = 'Connecting...'; $('pin2').hidden = true;
+      fetchAccess().then(function (a) {
+        $('loginMsg').textContent = '';
+        if (!a) { show('setup'); return; }
+        access = a; file = null; loginScreen(false);
+      });
+      return;
+    }
+    show('login'); $('loginMsg').className = 'msg'; $('loginMsg').textContent = 'Connecting...';
     load().then(function (res) {
       file = res.data; sha = res.sha; $('loginMsg').textContent = '';
-      var first = !file.salt;
-      $('pin2').hidden = !first;
-      $('loginTitle').textContent = first ? 'Create a password' : 'Bookings';
-      $('loginText').textContent = first ? 'Choose a password of at least 8 characters, for example three words. It locks customer names and phone numbers. Keep it safe: it cannot be recovered.' : 'Enter your password to manage rental bookings.';
-      $('loginBtn').textContent = first ? 'Create password' : 'Open bookings';
-      $('pin').focus();
+      loginScreen(!file.salt);
     }).catch(function (e) { fail(e, $('loginMsg')); if (e.message === 'auth') setTimeout(function () { show('setup'); $('setupMsg').className = 'msg err'; $('setupMsg').textContent = 'The access key was refused. Paste a new one.'; }, 1500); });
   }
   $('setupForm').addEventListener('submit', function (e) {
@@ -326,12 +404,20 @@ input[type=file]{width:100%;padding:10px;border:1.5px dashed var(--line);border-
     load().then(function () { ls('wjr-gh-token', token); $('token').value = ''; $('setupMsg').textContent = ''; start(); })
       .catch(function (err) { fail(err, $('setupMsg')); });
   });
-  $('forget').addEventListener('click', function () { ls('wjr-gh-token', null); token = ''; key = null; show('setup'); });
+  $('forget').addEventListener('click', function () { ls('wjr-gh-token', null); ss('wjr-gh-token', null); token = ''; key = null; start(); });
   $('loginForm').addEventListener('submit', function (e) {
     e.preventDefault();
     var pin = $('pin').value.trim(), m = $('loginMsg');
-    if (!file) return;
     if (!pin) return;
+    if (!file && access) {
+      m.className = 'msg'; m.textContent = 'Signing in...';
+      deriveKey(pin, access.salt).then(function (k) { return unseal(k, access.key).then(null, function () { throw new Error('Wrong password'); }); })
+        .then(function (o) { token = o.t; if ($('keep').checked) ls('wjr-gh-token', token); else ss('wjr-gh-token', token); return load(); })
+        .then(function (res) { file = res.data; sha = res.sha; access = null; $('loginForm').requestSubmit ? $('loginForm').requestSubmit() : $('loginBtn').click(); })
+        .catch(function (err) { fail(err, m); $('pin').value = ''; });
+      return;
+    }
+    if (!file) return;
     m.className = 'msg'; m.textContent = 'Opening...';
     if (!file.salt) {
       if (pin.length < 8) { m.className = 'msg err'; m.textContent = 'Use at least 8 characters'; return; }
@@ -344,16 +430,16 @@ input[type=file]{width:100%;padding:10px;border:1.5px dashed var(--line);border-
           d.salt = salt;
           return seal(k, { ok: 'wjr' }).then(function (c) { d.check = c; });
         }, 'Set up bookings password');
-      }).then(function (r) { if (r.stop) { m.className = 'msg err'; m.textContent = r.error; return; } openApp(); })
+      }).then(function (r) { if (r.stop) { m.className = 'msg err'; m.textContent = r.error; return; } saveAccess(pin); openApp(); })
         .catch(function (err) { fail(err, m); });
       return;
     }
     deriveKey(pin, file.salt).then(function (k) {
       return unseal(k, file.check).then(function () { key = k; return decryptAll(); }, function () { throw new Error('Wrong password'); });
-    }).then(openApp).catch(function (err) { fail(err, m); $('pin').value = ''; });
+    }).then(function () { fetchAccess().then(function (a) { if (!a) saveAccess(pin); }); openApp(); }).catch(function (err) { fail(err, m); $('pin').value = ''; });
   });
   function openApp() { $('pin').value = $('pin2').value = ''; $('loginMsg').textContent = ''; show('app'); render(); synced(); galInit(); }
-  $('logout').addEventListener('click', function () { key = null; bookings = []; start(); });
+  $('logout').addEventListener('click', function () { key = null; bookings = []; if (!ls('wjr-gh-token')) { ss('wjr-gh-token', null); token = ''; } start(); });
   $('refresh').addEventListener('click', function () {
     $('sync').textContent = 'Refreshing...';
     load().then(function (res) { file = res.data; sha = res.sha; return decryptAll(); }).then(function () { render(); synced(); }).catch(function (e) { fail(e, $('sync')); });
@@ -566,7 +652,7 @@ input[type=file]{width:100%;padding:10px;border:1.5px dashed var(--line);border-
           return unseal(oldKey, b.p).then(function (x) { return seal(newKey, x); }).then(function (p) { b.p = p; return b; });
         })).then(function () { d.salt = salt; return seal(newKey, { ok: 'wjr' }).then(function (c) { d.check = c; key = newKey; }); });
       }, 'Bookings password changed');
-    }).then(function () { $('newPin').value = $('newPin2').value = ''; m.className = 'msg ok'; m.textContent = 'Password changed. Use the new password from now on.'; })
+    }).then(function () { $('newPin').value = $('newPin2').value = ''; m.className = 'msg ok'; m.textContent = 'Password changed. Use the new password from now on, on every device.'; return saveAccess(p1); })
       .catch(function (err) { key = oldKey; fail(err, m); });
   });
 
@@ -623,11 +709,11 @@ input[type=file]{width:100%;padding:10px;border:1.5px dashed var(--line);border-
   }
   function slug(name) { return (name.replace(/\.[^.]+$/, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'photo').slice(0, 40); }
   function stamp() { var d = new Date(), p = function (n) { return (n < 10 ? '0' : '') + n; }; return d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + '-' + p(d.getHours()) + p(d.getMinutes()) + p(d.getSeconds()); }
-  function photo64(f) {
+  function photo64(f, max) {
     return new Promise(function (ok, bad) {
       var img = new Image(), url = URL.createObjectURL(f);
       img.onload = function () {
-        var s = Math.min(1, 1600 / Math.max(img.naturalWidth, img.naturalHeight)), c = document.createElement('canvas');
+        var s = Math.min(1, (max || 1600) / Math.max(img.naturalWidth, img.naturalHeight)), c = document.createElement('canvas');
         c.width = Math.round(img.naturalWidth * s); c.height = Math.round(img.naturalHeight * s);
         c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
         c.toBlob(function (bl) { bl.arrayBuffer().then(function (buf) { ok(b64(new Uint8Array(buf))); }); }, 'image/jpeg', 0.82);
@@ -675,6 +761,236 @@ input[type=file]{width:100%;padding:10px;border:1.5px dashed var(--line);border-
       .then(function () { galRender(); return ghGet(it.src).then(function (j) { if (j && j.sha) return ghDel(it.src, j.sha, 'Delete gallery file'); }); })
       .catch(function (err) { fail(err, $('galMsg')); galRender(); });
   });
+
+  // ---------- Edit the website: tap text to type, tap photos to replace, then Publish ----------
+  var ed = { page: null, doc: null, orig: {}, imgs: {}, busy: false, pick: null };
+  var PAGE_NAMES = { 'index.html': 'Home page', 'about/index.html': 'About', 'grenada-airport-taxi/index.html': 'Airport taxi', 'grenada-island-tours/index.html': 'Island tours', 'grenada-car-rental/index.html': 'Car rental' };
+  var KEEP_TAGS = { A: 1, B: 1, STRONG: 1, I: 1, EM: 1, BR: 1, SPAN: 1, SMALL: 1, SUP: 1, SUB: 1, U: 1, MARK: 1, ABBR: 1, TIME: 1 };
+  var KEEP_ATTR = { 'class': 1, href: 1, target: 1, rel: 1, title: 1, datetime: 1 };
+  function edMsg(t, cls) { var h = $('edHelp'); h.className = 'ehelp' + (cls ? ' ' + cls : ''); h.textContent = t; }
+  function cleanHTML(el) {
+    var box = document.createElement('div'); box.innerHTML = el.innerHTML;
+    (function walk(n) {
+      Array.prototype.slice.call(n.childNodes).forEach(function (c) {
+        if (c.nodeType === 8) { c.remove(); return; }
+        if (c.nodeType !== 1) return;
+        walk(c);
+        if (c.tagName === 'DIV' || c.tagName === 'P') { c.insertAdjacentHTML('beforebegin', '<br>'); }
+        if (!KEEP_TAGS[c.tagName] || (c.tagName === 'SPAN' && !c.getAttribute('class'))) {
+          while (c.firstChild) c.parentNode.insertBefore(c.firstChild, c); c.remove(); return;
+        }
+        Array.prototype.slice.call(c.attributes).forEach(function (a) { if (!KEEP_ATTR[a.name]) c.removeAttribute(a.name); });
+      });
+    })(box);
+    return box.innerHTML.replace(/^(<br>)+|(<br>)+$/g, '').replace(/ /g, ' ').replace(/&nbsp;/g, ' ').trim();
+  }
+  function edCount() {
+    var n = 0, d = ed.doc; if (!d) return 0;
+    d.querySelectorAll('[data-edit^="t"]').forEach(function (el) {
+      var k = el.getAttribute('data-edit'), ch = ed.orig[k] !== undefined && cleanHTML(el) !== ed.orig[k];
+      el.classList.toggle('wjr-changed', ch); if (ch) n++;
+    });
+    n += Object.keys(ed.imgs).length;
+    $('edCount').textContent = n ? n + (n === 1 ? ' change' : ' changes') + ' not published yet' : 'No changes yet';
+    $('edSave').disabled = !n || ed.busy; $('edUndo').disabled = !n || ed.busy;
+    return n;
+  }
+  function edBgStrip() {
+    var d = ed.doc, list = d ? d.querySelectorAll('[data-edit^="b"],[data-edit="c1"]') : [];
+    $('edBg').hidden = !list.length;
+    $('edStrip').innerHTML = Array.prototype.map.call(list, function (el, i) {
+      var k = el.getAttribute('data-edit'), u = (el.style.backgroundImage.match(/url\(["']?([^"')]+)/) || [])[1] || '';
+      var hero = el.closest('.hero-bg');
+      if (!u) u = (d.defaultView.getComputedStyle(el).backgroundImage.match(/url\(["']?([^"')]+)/) || [])[1] || '';
+      return '<button type="button" data-k="' + k + '"' + (ed.imgs[k] ? ' class="changed"' : '') + '><img src="' + esc(u) + '" alt=""><span>' + (k === 'c1' ? 'Footer (all pages)' : hero ? 'Top slideshow ' + (i + 1) : 'Background ' + (i + 1)) + '</span></button>';
+    }).join('');
+  }
+  function edSetup() {
+    var d = $('edFrame').contentDocument; ed.doc = d; ed.orig = {}; ed.imgs = {};
+    if (!d || !d.body) { $('edCount').textContent = ''; edMsg('This browser view cannot open the editor. Open the admin page in Chrome, Safari or Edge.', 'err'); return; }
+    if (d.documentElement.classList.contains('translated-ltr') || d.documentElement.classList.contains('translated-rtl')) {
+      edMsg('This page is showing in another language. Switch the website back to English, then open the editor again.', 'err');
+    }
+    var st = d.createElement('style');
+    st.textContent = '[data-edit^="t"]{outline:2px dashed rgba(70,150,215,.85)!important;outline-offset:3px;cursor:text!important;border-radius:2px}' +
+      '[data-edit^="t"]:hover,[data-edit^="t"]:focus{outline:2px solid #C9692A!important;background:rgba(255,211,172,.18)}' +
+      '.wjr-changed{outline:2px solid #2E9E5B!important}' +
+      '#galleryGrid img{outline:3px dashed rgba(151,204,246,.95);outline-offset:-3px}' +
+      'img[data-edit]{cursor:pointer!important;outline:3px dashed rgba(255,211,172,.95);outline-offset:-3px}img[data-edit]:hover{outline:3px solid #C9692A}' +
+      'img.wjr-changed{outline:4px solid #2E9E5B!important;outline-offset:-4px}' +
+      '.rv{opacity:1!important;transform:none!important}';
+    d.head.appendChild(st);
+    d.querySelectorAll('details').forEach(function (x) { x.open = true; });
+    d.querySelectorAll('img[src*="wjr-logo"]').forEach(function (x) { x.setAttribute('data-edit', 'logo'); });
+    d.querySelectorAll('.f-bg').forEach(function (x) { x.setAttribute('data-edit', 'c1'); });
+    d.querySelectorAll('#galleryGrid').forEach(function (x) { x.setAttribute('data-gal', '1'); });
+    d.querySelectorAll('[data-edit^="t"]').forEach(function (el) {
+      ed.orig[el.getAttribute('data-edit')] = cleanHTML(el);
+      el.setAttribute('contenteditable', 'true'); el.setAttribute('spellcheck', 'true');
+    });
+    // Links and buttons do nothing while editing; taps on photos open the photo picker.
+    d.addEventListener('click', function (e) {
+      var inText = e.target.closest('[contenteditable="true"]');
+      e.preventDefault(); e.stopPropagation();
+      if (inText) return;
+      if (e.target.closest('[data-gal]')) { edMsg('The About page gallery photos and videos are added or removed in the "Photos and videos" section of the admin page.', 'err'); return; }
+      var hit = d.elementsFromPoint(e.clientX, e.clientY).filter(function (x) {
+        var k = x.getAttribute && x.getAttribute('data-edit'); if (!k || k[0] === 't') return false;
+        return parseFloat(d.defaultView.getComputedStyle(x).opacity) > 0.3;
+      })[0];
+      if (hit) { ed.pick = hit.getAttribute('data-edit'); $('edFile').value = ''; $('edFile').click(); }
+    }, true);
+    d.addEventListener('submit', function (e) { e.preventDefault(); e.stopPropagation(); }, true);
+    d.addEventListener('paste', function (e) {
+      if (!e.target.closest || !e.target.closest('[contenteditable="true"]')) return;
+      e.preventDefault(); var t = (e.clipboardData || window.clipboardData).getData('text/plain');
+      d.execCommand('insertText', false, t.replace(/\s*\n\s*/g, ' '));
+    });
+    d.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && e.target.closest && e.target.closest('[contenteditable="true"]')) { e.preventDefault(); d.execCommand('insertLineBreak'); }
+      if (e.key === ' ' && e.target.closest && e.target.closest('summary [contenteditable="true"]')) { e.preventDefault(); d.execCommand('insertText', false, ' '); }
+    });
+    d.addEventListener('input', edCount);
+    edBgStrip(); edCount();
+  }
+  function edOpen(page) {
+    ed.page = page; ed.doc = null; ed.imgs = {};
+    $('edPage').textContent = PAGE_NAMES[page] || page;
+    edMsg('Tap any text with a dotted outline to change it. Tap a photo to replace it. Prices in the booking calculator are set by Savvy Tech.');
+    $('edStrip').hidden = true; $('edBg').hidden = true; $('edCount').textContent = 'Loading...'; $('edSave').disabled = $('edUndo').disabled = true;
+    // Show the page in English while editing.
+    try {
+      document.cookie = 'googtrans=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+      document.cookie = 'googtrans=; path=/; domain=' + location.hostname + '; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    } catch (e) {}
+    $('editor').hidden = false; document.body.style.overflow = 'hidden';
+    $('edFrame').onload = edSetup;
+    $('edFrame').src = (page.replace(/index\.html$/, '') || './') + '?wjr-edit=' + Date.now();
+  }
+  function edClose(force) {
+    if (!force && edCount() && !confirm('You have changes that are not published. Close without publishing?')) return;
+    $('editor').hidden = true; document.body.style.overflow = ''; $('edFrame').src = 'about:blank'; ed.doc = null;
+  }
+  $('pages').addEventListener('click', function (e) { var b = e.target.closest('[data-page]'); if (b) edOpen(b.dataset.page); });
+  $('edClose').addEventListener('click', function () { edClose(false); });
+  $('edUndo').addEventListener('click', function () { if (confirm('Undo all changes on this page?')) edOpen(ed.page); });
+  $('edBg').addEventListener('click', function () { $('edStrip').hidden = !$('edStrip').hidden; });
+  $('edStrip').addEventListener('click', function (e) { var b = e.target.closest('[data-k]'); if (!b) return; ed.pick = b.dataset.k; $('edFile').value = ''; $('edFile').click(); });
+  $('edFile').addEventListener('change', function () {
+    var f = $('edFile').files[0], k = ed.pick, d = ed.doc; if (!f || !k || !d) return;
+    if (!/^image\//.test(f.type)) { edMsg('Please choose a photo (JPG or PNG).', 'err'); return; }
+    var els = d.querySelectorAll('[data-edit="' + k + '"]'); if (!els.length) return;
+    var url = URL.createObjectURL(f);
+    ed.imgs[k] = f;
+    els.forEach(function (el) {
+      if (el.tagName === 'IMG') { el.removeAttribute('srcset'); el.src = url; el.classList.add('wjr-changed'); }
+      else { el.style.backgroundImage = "url('" + url + "')"; }
+    });
+    if (k === 'logo') d.querySelectorAll('image').forEach(function (x) { if (/wjr-logo/.test(x.getAttribute('href') || '')) x.setAttribute('href', url); });
+    edBgStrip(); edCount();
+    if (k === 'logo') edMsg('New logo ready. It will change on every page, including the van. Press Publish to put it on the website.');
+    else if (k === 'c1') edMsg('New footer photo ready. It will change on every page. Press Publish to put it on the website.');
+    else edMsg('Photo ready. If this photo is used on other pages too, it changes there as well. Press Publish to put it on the website.');
+  });
+  // Put the edits into the page's source file, by the data-edit markers.
+  var olds = [];
+  function swapEverywhere(src) {
+    olds.forEach(function (o) { src = src.split('src="' + o[0] + '"').join('src="' + o[1] + '"').split("url('" + o[0] + "')").join("url('" + o[1] + "')").split('/' + o[0] + '"').join('/' + o[1] + '"'); });
+    return src;
+  }
+  function applyEdits(src, texts, pics) {
+    Object.keys(texts).forEach(function (k) {
+      var at = src.indexOf('data-edit="' + k + '"'); if (at < 0) throw new Error('This page changed since it was opened. Close the editor and open it again.');
+      var lt = src.lastIndexOf('<', at), tag = src.slice(lt + 1).match(/^[a-zA-Z0-9]+/)[0], gt = src.indexOf('>', at) + 1;
+      var close = src.indexOf('</' + tag + '>', gt); if (close < 0) throw new Error('Could not save one of the texts.');
+      src = src.slice(0, gt) + texts[k] + src.slice(close);
+    });
+    Object.keys(pics).forEach(function (k) {
+      if (k === 'logo' || k === 'c1') return;
+      var at = src.indexOf('data-edit="' + k + '"'); if (at < 0) throw new Error('This page changed since it was opened. Close the editor and open it again.');
+      var lt = src.lastIndexOf('<', at), gt = src.indexOf('>', at) + 1, tagSrc = src.slice(lt, gt), out;
+      var old = (tagSrc.match(k[0] === 'i' ? /\ssrc="([^"]*)"/ : /url\((['"]?)([^)'"]*)\1\)/) || []);
+      old = k[0] === 'i' ? old[1] : old[2];
+      if (old && /^assets\//.test(old)) olds.push([old, pics[k]]);
+      if (k[0] === 'i') out = tagSrc.replace(/\ssrc="[^"]*"/, ' src="' + pics[k] + '"').replace(/\s(srcset|sizes)="[^"]*"/g, '');
+      else out = tagSrc.replace(/url\((['"]?)[^)'"]*\1\)/, "url('" + pics[k] + "')");
+      src = src.slice(0, lt) + out + src.slice(gt);
+    });
+    return src;
+  }
+  function pngData(f, w) {
+    return new Promise(function (ok, no) {
+      var img = new Image(), u = URL.createObjectURL(f);
+      img.onload = function () {
+        var s = Math.min(1, w / img.naturalWidth), c = document.createElement('canvas');
+        c.width = Math.round(img.naturalWidth * s); c.height = Math.round(img.naturalHeight * s);
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(u);
+        ok(c.toDataURL('image/png').split(',')[1]);
+      };
+      img.onerror = function () { no(new Error('That file could not be read as a picture.')); };
+      img.src = u;
+    });
+  }
+  function logoUpload(f) {
+    // The logo keeps its file names, so it changes on every page at once.
+    return [['assets/wjr-logo-sm.png', 300], ['assets/wjr-logo.png', 900]].reduce(function (pr, x) {
+      return pr.then(function () { return Promise.all([pngData(f, x[1]), ghGet(x[0])]); })
+        .then(function (r) { return ghPut(x[0], r[0], r[1] && r[1].sha, 'Logo updated'); });
+    }, Promise.resolve());
+  }
+  $('edSave').addEventListener('click', function () {
+    var d = ed.doc; if (!d || ed.busy) return;
+    var texts = {}, pics = {}, keys = Object.keys(ed.imgs);
+    d.querySelectorAll('[data-edit^="t"]').forEach(function (el) { var k = el.getAttribute('data-edit'), h = cleanHTML(el); if (ed.orig[k] !== undefined && h !== ed.orig[k]) texts[k] = h; });
+    ed.busy = true; edCount(); var i = 0;
+    var up = function () {
+      if (i >= keys.length) return Promise.resolve();
+      var k = keys[i], f = ed.imgs[k], path = 'assets/site/' + stamp() + '-' + i + '-' + slug(f.name) + '.jpg';
+      edMsg('Uploading photo ' + (i + 1) + ' of ' + keys.length + '...');
+      if (k === 'logo') return logoUpload(f).then(function () { i++; return up(); });
+      return photo64(f, k[0] === 'i' ? 1600 : 1900).then(function (c) { return ghPut(path, c, null, 'Website photo: ' + (PAGE_NAMES[ed.page] || ed.page)); })
+        .then(function () { pics[k] = path; i++; return up(); });
+    };
+    var save = function (tries) {
+      edMsg('Publishing...'); olds = [];
+      var pageKeys = Object.keys(pics).filter(function (k) { return k !== 'c1'; });
+      var jobs = [];
+      if (Object.keys(texts).length || pageKeys.length) {
+        jobs.push(ghGet(ed.page).then(function (j) {
+          if (!j) throw new Error('Page not found on GitHub.');
+          var out = swapEverywhere(applyEdits(dec.decode(unb64(j.content.replace(/\s/g, ''))), texts, pics));
+          return ghPut(ed.page, b64(enc.encode(out)), j.sha, 'Website text and photos updated: ' + (PAGE_NAMES[ed.page] || ed.page));
+        }).then(function () {
+          // The same photo on other pages (for example a car photo) changes there too.
+          if (!olds.length) return;
+          return Object.keys(PAGE_NAMES).filter(function (p) { return p !== ed.page; }).reduce(function (pr, p) {
+            return pr.then(function () {
+              return ghGet(p).then(function (j) {
+                if (!j) return; var src = dec.decode(unb64(j.content.replace(/\s/g, ''))), out = swapEverywhere(src);
+                if (out !== src) return ghPut(p, b64(enc.encode(out)), j.sha, 'Same photo updated: ' + PAGE_NAMES[p]);
+              });
+            });
+          }, Promise.resolve());
+        }));
+      }
+      if (pics.c1) {
+        jobs.push(ghGet('css/styles.css').then(function (j) {
+          if (!j) throw new Error('Could not open the website style file.');
+          var css = dec.decode(unb64(j.content.replace(/\s/g, '')));
+          var out = css.replace(/(\.f-bg\{[^}]*?background:url\()("[^"]*"|'[^']*'|[^)]*)\)/, '$1"../' + pics.c1 + '")');
+          return ghPut('css/styles.css', b64(enc.encode(out)), j.sha, 'Footer photo updated');
+        }));
+      }
+      return Promise.all(jobs).catch(function (e) { if (e.conflict && tries < 3) return save(tries + 1); throw e; });
+    };
+    up().then(function () { return save(0); }).then(function () {
+      Object.keys(texts).forEach(function (k) { ed.orig[k] = texts[k]; });
+      ed.imgs = {}; d.querySelectorAll('.wjr-changed').forEach(function (x) { x.classList.remove('wjr-changed'); });
+      ed.busy = false; edBgStrip(); edCount();
+      edMsg('Published. The live website shows the changes in about 1 to 2 minutes (refresh the page to see them).', 'ok');
+    }).catch(function (e) { ed.busy = false; edCount(); edMsg(e.message === 'auth' ? 'The access key was refused. Ask Savvy Tech for a new one.' : (e.message === 'Failed to fetch' ? 'No connection. Check the internet and press Publish again.' : e.message), 'err'); });
+  });
+  window.addEventListener('beforeunload', function (e) { if (!$('editor').hidden && edCount()) { e.preventDefault(); e.returnValue = ''; } });
 })();
 </script>
 </body>
