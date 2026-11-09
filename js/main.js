@@ -84,7 +84,7 @@
     }
   }
   [fromSel, toSel, paxSel].forEach(function (el) { el.addEventListener('change', updateFareOut); });
-  // Stops on the way (EC$20 each): show the "where" box when at least one stop is chosen
+  // Stops on the way (EC$20 each, added to the rate but not shown on the site): show the "where" box when at least one stop is chosen
   $('txStops').addEventListener('change', function () { $('stopWhere').hidden = $('txStops').value === '0'; updateFareOut(); if (!$('stopWhere').hidden) $('txStopWhere').focus(); });
 
   document.querySelectorAll('[data-dest]').forEach(function (card) {
@@ -102,18 +102,26 @@
   var TOUR = { half: { label: 'Half day (4 hours)', ec: 370, us: 140 }, full: { label: 'Whole day (7 hours)', ec: 650, us: 245 }, extraEc: 26, extraUs: 10, included: 2 };
   // Each tour has one length: Garden of Eden and St. George's are half days, the others whole days
   var TOUR_LEN = { 'Garden of Eden': 'half', "St. George's": 'half', 'Waterfalls': 'full', 'Chocolate Rum': 'full', 'Round de Island': 'full' }, tourBtn = document.querySelector('#p-tours button[type="submit"]');
-  function syncTourLen() { $('toLen').value = TOUR_LEN[$('toTour').value] || 'full'; }
+  // "Custom tour": the guest designs their own tour, picks the length and gets a quote
+  var CUSTOM = 'Custom tour';
+  function isCustom() { return $('toTour').value === CUSTOM; }
+  function syncTourLen() {
+    var c = isCustom();
+    if (!c) $('toLen').value = TOUR_LEN[$('toTour').value] || 'full';
+    $('toLen').disabled = !c; $('toLen').title = c ? 'Choose half day or whole day' : 'Set by the tour you choose';
+    $('customWhere').hidden = !c;
+  }
   function tourQuote() {
-    var guests = +$('toGuests').value; if (guests > MAX_PAX) return null;
+    var guests = +$('toGuests').value; if (guests > MAX_PAX || isCustom()) return null;
     var len = TOUR[$('toLen').value], extra = Math.max(0, guests - TOUR.included);
     return { ec: len.ec + extra * TOUR.extraEc, us: len.us + extra * TOUR.extraUs, len: len };
   }
   function updateTourOut() {
     var out = $('fareOut'), q = tourQuote();
     if (q) { out.innerHTML = '<span>Tour price</span><b>EC$' + q.ec + '</b><em>US$' + q.us + '</em>'; tourBtn.textContent = 'Book this tour'; }
-    else { out.innerHTML = 'For groups larger than 5 persons, send us your tour details and we will reply with a quote.'; tourBtn.textContent = 'Request a quote'; }
+    else { out.innerHTML = isCustom() ? 'Tell us the places you would like to visit and we will reply with a quote for your tour.' : 'For groups larger than 5 persons, send us your tour details and we will reply with a quote.'; tourBtn.textContent = 'Request a quote'; }
   }
-  $('toTour').addEventListener('change', syncTourLen); syncTourLen();
+  $('toTour').addEventListener('change', function () { syncTourLen(); if (isCustom()) $('toPlaces').focus(); }); syncTourLen();
   ['toTour', 'toLen', 'toGuests'].forEach(function (id) { $(id).addEventListener('change', updateFareOut); });
 
   // ---------- Rentals: rates, booked dates and calendar ----------
@@ -305,9 +313,10 @@
     } else if (tab === 'tours') {
       var tq = tourQuote();
       lines = [tq ? 'Hello WJR Taxi Tours & Auto Rentals, I would like to book a tour.' : 'Hello WJR Taxi Tours & Auto Rentals, could you send me a quote for a tour?', 'Tour: ' + v('toTour'), 'Length: ' + TOUR[$('toLen').value].label, 'Date: ' + when('toDate'), 'Pickup from: ' + v('toPickup'), 'Guests: ' + $('toGuests').value];
+      if (isCustom()) lines.splice(2, 0, 'Places to visit: ' + v('toPlaces'));
       if (tq) lines.push('Price shown: EC$' + tq.ec + ' / US$' + tq.us);
     } else {
-      lines = ['Hello WJR Taxi Tours & Auto Rentals, I would like to rent a car.', 'Vehicle: ' + v('reCar'), 'Pick-up date: ' + when('reStart'), 'Return date: ' + when('reEnd'), 'Pickup location: ' + v('rePlace')];
+      lines = ['Hello WJR Taxi Tours & Auto Rentals, I would like to rent a car.', 'Vehicle: ' + v('reCar'), 'Pick-up date: ' + when('reStart'), 'Return date: ' + when('reEnd')];
       var rc = carByOption($('reCar').value);
       if (rc && $('reStart').value && $('reEnd').value && $('reEnd').value >= $('reStart').value) { var rq = rentalQuote(rc, dnum($('reStart').value), dnum($('reEnd').value)); lines.push('Rental: ' + rq.days + ' day' + (rq.days > 1 ? 's' : '') + ' at EC$' + rq.rate + ' per day', 'Estimated total: EC$' + rq.total); }
     }
