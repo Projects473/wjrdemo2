@@ -309,7 +309,7 @@
       lines = [q.ec ? 'Hello WJR Taxi Tours & Auto Rentals, I would like to book a taxi.' : 'Hello WJR Taxi Tours & Auto Rentals, could you send me a quote for a taxi?', 'From: ' + placeName(fromSel, fromOther), 'To: ' + placeName(toSel, toOther), 'Passengers: ' + paxSel.value];
       if ($('txStops').value !== '0') lines.push('Stops on the way: ' + $('txStops').value + ($('txStopWhere').value.trim() ? ' (' + $('txStopWhere').value.trim() + ')' : ''));
       if (q.ec) lines.push('Rate shown: ' + quoteText(q));
-      lines.push('Pickup: ' + when('txWhen'));
+      lines.push('Pickup: ' + when('txDate') + ($('txTime').value ? ' at ' + $('txTime').selectedOptions[0].textContent : ''));
     } else if (tab === 'tours') {
       var tq = tourQuote();
       lines = [tq ? 'Hello WJR Taxi Tours & Auto Rentals, I would like to book a tour.' : 'Hello WJR Taxi Tours & Auto Rentals, could you send me a quote for a tour?', 'Tour: ' + v('toTour'), 'Length: ' + TOUR[$('toLen').value].label, 'Date: ' + when('toDate'), 'Pickup from: ' + v('toPickup'), 'Guests: ' + $('toGuests').value];
@@ -344,7 +344,17 @@
 
   var now = new Date(); now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
   var today = now.toISOString().slice(0, 10);
-  $('txWhen').min = today + 'T00:00';
+  // Taxi pickup time: its own list, every 15 minutes (flight arrival times often end in :15 or :45)
+  (function () {
+    var sel = $('txTime');
+    for (var m = 0; m < 1440; m += 15) {
+      var h = Math.floor(m / 60), mm = m % 60, o = document.createElement('option');
+      o.value = (h < 10 ? '0' : '') + h + ':' + (mm < 10 ? '0' : '') + mm;
+      o.textContent = ((h % 12) || 12) + ':' + (mm < 10 ? '0' : '') + mm + (h < 12 ? ' AM' : ' PM');
+      sel.appendChild(o);
+    }
+  })();
+  $('txDate').min = today;
   ['toDate', 'reStart', 'reEnd'].forEach(function (id) { $(id).min = today; });
   $('reStart').addEventListener('change', function () { $('reEnd').min = this.value || today; if ($('reEnd').value && $('reEnd').value < this.value) $('reEnd').value = this.value; });
   document.querySelectorAll('.date-field input').forEach(function (inp) {

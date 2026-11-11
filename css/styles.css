@@ -384,6 +384,7 @@ html[data-theme="light"] .cal-wrap{box-shadow:0 14px 34px rgba(30,35,40,.07)}
 
 /* Tour prices and booking */
 #p-tours,#p-taxi{grid-template-columns:repeat(5,minmax(0,1fr))}
+#p-taxi{grid-template-columns:repeat(3,minmax(0,1fr))}
 #p-tours .btn,#p-taxi .btn,#p-taxi .stop-where,#p-tours .stop-where{grid-column:1/-1}
 #p-taxi .stop-where[hidden],#p-tours .stop-where[hidden]{display:none}
 .tour .meta{margin-bottom:16px}

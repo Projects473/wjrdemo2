@@ -230,7 +230,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Kaushan+Script&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/styles.css?v=202611090840">
+<link rel="stylesheet" href="css/styles.css?v=202611111006">
 <script>(function(){var t=null;try{t=new URLSearchParams(location.search).get('theme')||localStorage.getItem('wjr-theme')}catch(e){}if(t==='dark')document.documentElement.removeAttribute('data-theme');var d=document.documentElement;if('IntersectionObserver' in window){d.classList.add('js-rv');setTimeout(function(){d.classList.add('rv-all')},5000)}})();</script>
 </head>
 <body>
@@ -337,7 +337,8 @@
           <div class="fields" id="p-taxi" role="tabpanel">
             <div class="field has-select"><label for="txFrom"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>From</label><select id="txFrom"></select><input class="other-in" id="txFromOther" type="text" placeholder="Type your pickup place" aria-label="Type your pickup place"><button class="other-back" type="button" aria-label="Back to the list of places" title="Back to the list">List</button></div>
             <div class="field has-select"><label for="txTo"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Going to</label><select id="txTo"><option value="">Choose a destination</option></select><input class="other-in" id="txToOther" type="text" placeholder="Type where you are going" aria-label="Type where you are going"><button class="other-back" type="button" aria-label="Back to the list of places" title="Back to the list">List</button></div>
-            <div class="field date-field"><label for="txWhen"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Date and time</label><input id="txWhen" type="datetime-local"><span class="ph" aria-hidden="true">Select date and time</span></div>
+            <div class="field date-field"><label for="txDate"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Date</label><input id="txDate" type="date"><span class="ph" aria-hidden="true">Select a date</span></div>
+            <div class="field has-select"><label for="txTime"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Time</label><select id="txTime"><option value="">Select a time</option></select></div>
             <div class="field has-select"><label for="txPax"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5M16 4.5a3.5 3.5 0 0 1 0 7M18 14.6c2 .7 3.2 2.6 3.5 5.4"/></svg>Passengers</label><select id="txPax"><option value="1">1 passenger</option><option value="2" selected>2 passengers</option><option value="3">3 passengers</option><option value="4">4 passengers</option><option value="5">5 passengers</option><option value="6">More than 5 (request a quote)</option></select></div>
             <div class="field has-select"><label for="txStops">Stops on the way</label><select id="txStops"><option value="0" selected>No stops</option><option value="1">1 stop</option><option value="2">2 stops</option><option value="3">3 stops</option></select></div>
             <div class="field stop-where" id="stopWhere" hidden><label for="txStopWhere">Where would you like to stop?</label><input id="txStopWhere" type="text" placeholder="For example: IGA, Grand Anse"></div>
@@ -646,8 +647,8 @@
   <a class="btn btn-peach wa" href="https://wa.me/14734037483" target="_blank" rel="noopener" aria-label="Chat on WhatsApp"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.7-5A8.5 8.5 0 1 1 8 19.3L3 21z"/></svg></a>
 </div>
 
-<script src="js/fares.js?v=202611090840"></script>
-<script src="js/rentals.js?v=202611090840"></script>
-<script src="js/main.js?v=202611090840"></script>
+<script src="js/fares.js?v=202611111006"></script>
+<script src="js/rentals.js?v=202611111006"></script>
+<script src="js/main.js?v=202611111006"></script>
 </body>
 </html>
