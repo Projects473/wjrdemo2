@@ -74,3 +74,17 @@
   }
   if (lb) { lb.querySelector('.lb-close').addEventListener('click', function () { lb.close(); }); lb.addEventListener('click', function (e) { if (e.target === lb) lb.close(); }); }
 })();
+
+// Back to top arrow: appears after scrolling down, returns smoothly to the top
+(function () {
+  var b = document.createElement('button');
+  b.type = 'button'; b.className = 'to-top'; b.setAttribute('aria-label', 'Back to top'); b.title = 'Back to top';
+  b.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
+  document.body.appendChild(b);
+  function sync() { b.classList.toggle('show', window.scrollY > 600); }
+  window.addEventListener('scroll', sync, { passive: true }); sync();
+  b.addEventListener('click', function () {
+    var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: 0, behavior: still ? 'auto' : 'smooth' });
+  });
+})();

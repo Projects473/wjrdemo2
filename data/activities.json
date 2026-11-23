@@ -1,0 +1,14 @@
+{
+  "items": [
+    {"src": "assets/activities/parnassus-sign.jpg", "type": "image", "caption": "The Mt. Parnassus Plantation sign", "date": "2026-11-21"},
+    {"src": "assets/activities/d-bamboo-stall.jpg", "type": "image", "caption": "Breakfast being served at D Bamboo", "date": "2026-11-21"},
+    {"src": "assets/activities/bamboo-breakfast-plate.jpg", "type": "image", "caption": "Breakfast served in a bamboo boat", "date": "2026-11-21"},
+    {"src": "assets/activities/saturday-menu.jpg", "type": "image", "caption": "The Saturday breakfast menu, from 7 am", "date": "2026-11-21"},
+    {"src": "assets/activities/cocoa-pod.mp4", "type": "video", "caption": "Opening a fresh cocoa pod to taste", "date": "2026-11-21", "poster": "assets/activities/cocoa-pod.jpg"},
+    {"src": "assets/activities/breakfast-guest.jpg", "type": "image", "caption": "A happy guest with his breakfast", "date": "2026-11-21"},
+    {"src": "assets/activities/flower-tea.mp4", "type": "video", "caption": "Pouring fresh flower tea", "date": "2026-11-21", "poster": "assets/activities/flower-tea.jpg"},
+    {"src": "assets/activities/cocoa-picking.jpg", "type": "image", "caption": "Picking cocoa pods on the plantation", "date": "2026-11-21"},
+    {"src": "assets/activities/plantation-walk.mp4", "type": "video", "caption": "A guided walk through the plantation", "date": "2026-11-21", "poster": "assets/activities/plantation-walk.jpg"},
+    {"src": "assets/activities/spice-products.jpg", "type": "image", "caption": "Spices, oils and local products to take home", "date": "2026-11-21"}
+  ]
+}

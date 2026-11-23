@@ -5,6 +5,7 @@
   var tabs = document.querySelectorAll('[data-tab]');
   function showTab(name) {
     tabs.forEach(function (t) { var on = t.dataset.tab === name; t.setAttribute('aria-selected', on); $(t.getAttribute('aria-controls')).hidden = !on; });
+    document.querySelectorAll('#booker .field.missing').forEach(function (f) { f.classList.remove('missing'); }); if ($('needMsg')) $('needMsg').hidden = true;
     $('fareOut').hidden = false;
     currentTab = name; if (typeof updateFareOut === 'function' && fromSel) updateFareOut();
   }
@@ -70,17 +71,15 @@
   });
   var currentTab = 'taxi', rideBtn = document.querySelector('#p-taxi button[type="submit"]');
   function updateFareOut() {
-    setTimeout(function () { var b = document.querySelector('[role=tabpanel]:not([hidden]) button[type="submit"]'); $('mailBtn').querySelector('span').textContent = b && /quote/i.test(b.textContent) ? 'Request quote by email' : 'Email instead'; }, 0);
     var out = $('fareOut');
     if (currentTab === 'rentals') { updateRentalOut(); return; }
     if (currentTab === 'tours') { updateTourOut(); return; }
     var other = fromSel.value === OTHER || toSel.value === OTHER;
-    if (toSel.value === '' ) { out.textContent = 'Choose where you are going to see the rate'; rideBtn.textContent = 'Book this ride'; return; }
+    if (toSel.value === '' ) { out.textContent = 'Choose where you are going to see the rate'; return; }
     var q = quote(fromSel.value, toSel.value, +paxSel.value);
-    if (q.ec) { out.innerHTML = '<span>Your rate</span><b>EC$' + q.ec + '</b><em>US$' + q.us + '</em>'; rideBtn.textContent = 'Book this ride'; }
+    if (q.ec) { out.innerHTML = '<span>Your rate</span><b>EC$' + q.ec + '</b><em>US$' + q.us + '</em>'; }
     else {
       out.innerHTML = (q.big ? 'For groups larger than 5 persons, send us your trip details and we will reply with a quote.' : q.base === 0 ? 'Same area: send us the trip for a quote.' : (other ? 'Not on our list? Send us the trip and WJR Taxi Tours &amp; Auto Rentals will reply with a quote.' : 'This trip is not on our rate list yet. Send it to us for a quote.')) + '';
-      rideBtn.textContent = 'Request a quote';
     }
   }
   [fromSel, toSel, paxSel].forEach(function (el) { el.addEventListener('change', updateFareOut); });
@@ -97,18 +96,47 @@
     });
   });
   $('destCount').textContent = F.rows.length;
+  // "Get a taxi there" buttons (Other activities): open the Taxi tab with that destination
+  document.querySelectorAll('[data-taxi-to]').forEach(function (b) {
+    var i = rowIndex(b.dataset.taxiTo); if (i < 0) { b.hidden = true; return; }
+    b.addEventListener('click', function () {
+      showTab('taxi'); toSel.closest('.field').classList.remove('is-other'); toSel.value = i; updateFareOut();
+      $('book').scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+  // Other activities: photos and videos from data/activities.json (same format as data/gallery.json).
+  // The first 4 items sit beside the text, the rest in the strip below. Photos open larger in the lightbox.
+  (function () {
+    var feat = $('actFeature'), grid = $('actGallery'), lb = $('lightbox'); if (!grid) return;
+    function esc(s) { return String(s || '').replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+    function fig(it) {
+      var cap = esc(it.caption), media = it.type === 'video'
+        ? '<video src="' + esc(it.src) + '"' + (it.poster ? ' poster="' + esc(it.poster) + '"' : '') + ' controls preload="none" playsinline></video>'
+        : '<button type="button" class="gal-open" aria-label="View larger: ' + cap + '"><img src="' + esc(it.src) + '" alt="' + cap + '" loading="lazy"></button>';
+      return '<figure class="gal-item">' + media + (cap ? '<figcaption>' + cap + '</figcaption>' : '') + '</figure>';
+    }
+    fetch(grid.dataset.src + '?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+      if (!d || !d.items || !d.items.length) return;
+      feat.innerHTML = d.items.slice(0, 4).map(fig).join(''); grid.innerHTML = d.items.slice(4).map(fig).join('');
+    }).catch(function () {});
+    $('activities').addEventListener('click', function (e) {
+      var b = e.target.closest('.gal-open'); if (!b || !lb || !lb.showModal) return;
+      var img = b.querySelector('img'); lb.querySelector('img').src = img.src; lb.querySelector('img').alt = img.alt; lb.querySelector('p').textContent = img.alt; lb.showModal();
+    });
+    if (lb) { lb.querySelector('.lb-close').addEventListener('click', function () { lb.close(); }); lb.addEventListener('click', function (e) { if (e.target === lb) lb.close(); }); }
+  })();
 
   // ---------- Tour prices: half day or whole day for 1 to 2 people, plus EC$26 / US$10 per extra person ----------
   var TOUR = { half: { label: 'Half day (4 hours)', ec: 370, us: 140 }, full: { label: 'Whole day (7 hours)', ec: 650, us: 245 }, extraEc: 26, extraUs: 10, included: 2 };
-  // Each tour has one length: Garden of Eden and St. George's are half days, the others whole days
-  var TOUR_LEN = { 'Garden of Eden': 'half', "St. George's": 'half', 'Waterfalls': 'full', 'Chocolate Rum': 'full', 'Round de Island': 'full' }, tourBtn = document.querySelector('#p-tours button[type="submit"]');
-  // "Custom tour": the guest designs their own tour, picks the length and gets a quote
+  // Each tour has one length: Gardens and St. George's are half days, the others whole days
+  var TOUR_LEN = { 'Gardens': 'half', "St. George's": 'half', 'Waterfalls': 'full', 'Chocolate Rum': 'full', 'Round de Island': 'full' }, tourBtn = document.querySelector('#p-tours button[type="submit"]');
+  // "Custom tour": the guest designs their own tour and gets a quote; Length is not used
   var CUSTOM = 'Custom tour';
   function isCustom() { return $('toTour').value === CUSTOM; }
   function syncTourLen() {
     var c = isCustom();
-    if (!c) $('toLen').value = TOUR_LEN[$('toTour').value] || 'full';
-    $('toLen').disabled = !c; $('toLen').title = c ? 'Choose half day or whole day' : 'Set by the tour you choose';
+    $('toLen').value = c ? 'custom' : (TOUR_LEN[$('toTour').value] || 'full');
+    $('toLen').closest('.field').classList.toggle('off', c); $('toLen').title = c ? 'Not needed for a custom tour' : 'Set by the tour you choose';
     $('customWhere').hidden = !c;
   }
   function tourQuote() {
@@ -118,8 +146,8 @@
   }
   function updateTourOut() {
     var out = $('fareOut'), q = tourQuote();
-    if (q) { out.innerHTML = '<span>Tour price</span><b>EC$' + q.ec + '</b><em>US$' + q.us + '</em>'; tourBtn.textContent = 'Book this tour'; }
-    else { out.innerHTML = isCustom() ? 'Tell us the places you would like to visit and we will reply with a quote for your tour.' : 'For groups larger than 5 persons, send us your tour details and we will reply with a quote.'; tourBtn.textContent = 'Request a quote'; }
+    if (q) { out.innerHTML = '<span>Tour price</span><b>EC$' + q.ec + '</b><em>US$' + q.us + '</em>'; }
+    else { out.innerHTML = isCustom() ? 'Tell us the places you would like to visit and we will reply with a quote for your tour.' : 'For groups larger than 5 persons, send us your tour details and we will reply with a quote.'; }
   }
   $('toTour').addEventListener('change', function () { syncTourLen(); if (isCustom()) $('toPlaces').focus(); }); syncTourLen();
   ['toTour', 'toLen', 'toGuests'].forEach(function (id) { $(id).addEventListener('change', updateFareOut); });
@@ -297,9 +325,43 @@
     if (val.length > 10) { o.hour = 'numeric'; o.minute = '2-digit'; o.hour12 = true; }
     return d.toLocaleString('en-GB', o);
   }
+  // Required fields: every field on each tab, except Stops on the Taxi tab
+  function missingFields(tab) {
+    var need = [];
+    function chk(ok, id, name) { if (!ok) need.push([id, name]); }
+    if (tab === 'taxi') {
+      chk(fromSel.value !== OTHER || fromOther.value.trim(), fromSel.value === OTHER ? 'txFromOther' : 'txFrom', 'From');
+      chk(toSel.value !== '' && (toSel.value !== OTHER || toOther.value.trim()), toSel.value === OTHER ? 'txToOther' : 'txTo', 'Going to');
+      chk($('txDate').value, 'txDate', 'Date'); chk($('txTime').value, 'txTime', 'Time');
+    } else if (tab === 'tours') {
+      if (isCustom()) chk($('toPlaces').value.trim(), 'toPlaces', 'Where you would like to go');
+      chk($('toDate').value, 'toDate', 'Date'); chk($('toPickup').value.trim(), 'toPickup', 'Pickup');
+    } else {
+      chk($('reStart').value, 'reStart', 'Pick-up date'); chk($('reEnd').value, 'reEnd', 'Return date');
+    }
+    return need;
+  }
+  function checkRequired(tab) {
+    document.querySelectorAll('#booker .field.missing').forEach(function (f) { f.classList.remove('missing'); });
+    var need = missingFields(tab), msg = $('needMsg');
+    var text = 'Please fill in: ' + need.map(function (n) { return n[1]; }).join(', ') + '.';
+    if (!need.length && tab === 'rentals' && $('reEnd').value < $('reStart').value) { need = [['reEnd', '']]; text = 'Please choose a return date on or after the pick-up date.'; }
+    if (!need.length) { msg.hidden = true; return true; }
+    need.forEach(function (n) { $(n[0]).closest('.field').classList.add('missing'); });
+    msg.textContent = text;
+    msg.hidden = false; $(need[0][0]).focus();
+    return false;
+  }
+  $('booker').addEventListener('input', clearMissing); $('booker').addEventListener('change', clearMissing);
+  function clearMissing(e) {
+    var f = e.target.closest && e.target.closest('.field.missing'); if (!f) return;
+    f.classList.remove('missing');
+    if (!document.querySelector('#booker .field.missing')) $('needMsg').hidden = true;
+  }
+  function activeTab() { return document.querySelector('[data-tab][aria-selected="true"]').dataset.tab; }
   $('booker').addEventListener('submit', function (e) {
     e.preventDefault();
-    var tab = document.querySelector('[data-tab][aria-selected="true"]').dataset.tab;
+    var tab = activeTab(); if (!checkRequired(tab)) return;
     sendWA(bookingLines(tab, formVal, formWhen));
   });
   function bookingLines(tab, v, when) {
@@ -312,7 +374,7 @@
       lines.push('Pickup: ' + when('txDate') + ($('txTime').value ? ' at ' + $('txTime').selectedOptions[0].textContent : ''));
     } else if (tab === 'tours') {
       var tq = tourQuote();
-      lines = [tq ? 'Hello WJR Taxi Tours & Auto Rentals, I would like to book a tour.' : 'Hello WJR Taxi Tours & Auto Rentals, could you send me a quote for a tour?', 'Tour: ' + v('toTour'), 'Length: ' + TOUR[$('toLen').value].label, 'Date: ' + when('toDate'), 'Pickup from: ' + v('toPickup'), 'Guests: ' + $('toGuests').value];
+      lines = [tq ? 'Hello WJR Taxi Tours & Auto Rentals, I would like to book a tour.' : 'Hello WJR Taxi Tours & Auto Rentals, could you send me a quote for a tour?', 'Tour: ' + v('toTour'), 'Length: ' + (isCustom() ? 'to be agreed' : TOUR[$('toLen').value].label), 'Date: ' + when('toDate'), 'Pickup from: ' + v('toPickup'), 'Guests: ' + $('toGuests').value];
       if (isCustom()) lines.splice(2, 0, 'Places to visit: ' + v('toPlaces'));
       if (tq) lines.push('Price shown: EC$' + tq.ec + ' / US$' + tq.us);
     } else {
@@ -327,7 +389,8 @@
     if (!e.target.closest('.mail-quote')) return; e.preventDefault(); emailRequest();
   });
   function emailRequest() {
-    var tab = document.querySelector('[data-tab][aria-selected="true"]').dataset.tab, lines = bookingLines(tab, formVal, formWhen);
+    var tab = activeTab(); if (!checkRequired(tab)) return;
+    var lines = bookingLines(tab, formVal, formWhen);
     var isQuote = /quote/.test(lines[0]), what = tab === 'tours' ? 'island tour' : tab === 'rentals' ? 'car rental' : 'taxi';
     location.href = 'mailto:wjrtt@outlook.com?subject=' + encodeURIComponent((isQuote ? 'Quote request: ' : 'Booking request: ') + what) + '&body=' + encodeURIComponent(lines.join('\n') + '\n\nName:\nPhone or WhatsApp:\n');
   }
@@ -447,4 +510,18 @@
     setTimeout(check, 300);
     setTimeout(function () { rvs.forEach(show); }, 4000);
   }
+})();
+
+// Back to top arrow: appears after scrolling down, returns smoothly to the top
+(function () {
+  var b = document.createElement('button');
+  b.type = 'button'; b.className = 'to-top'; b.setAttribute('aria-label', 'Back to top'); b.title = 'Back to top';
+  b.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
+  document.body.appendChild(b);
+  function sync() { b.classList.toggle('show', window.scrollY > 600); }
+  window.addEventListener('scroll', sync, { passive: true }); sync();
+  b.addEventListener('click', function () {
+    var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: 0, behavior: still ? 'auto' : 'smooth' });
+  });
 })();
