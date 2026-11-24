@@ -96,32 +96,55 @@
     });
   });
   $('destCount').textContent = F.rows.length;
-  // "Get a taxi there" buttons (Other activities): open the Taxi tab with that destination
+  // "Get a taxi there" buttons (Other activities): open the Taxi tab with that destination.
+  // Other pages link here as ./?taxi=Mt.%20Parnassus#book to do the same.
+  function taxiTo(name, scroll) {
+    var i = rowIndex(name); if (i < 0) return false;
+    showTab('taxi'); toSel.closest('.field').classList.remove('is-other'); toSel.value = i; updateFareOut();
+    if (scroll) $('book').scrollIntoView({ behavior: 'smooth' });
+    return true;
+  }
   document.querySelectorAll('[data-taxi-to]').forEach(function (b) {
-    var i = rowIndex(b.dataset.taxiTo); if (i < 0) { b.hidden = true; return; }
-    b.addEventListener('click', function () {
-      showTab('taxi'); toSel.closest('.field').classList.remove('is-other'); toSel.value = i; updateFareOut();
-      $('book').scrollIntoView({ behavior: 'smooth' });
-    });
+    if (rowIndex(b.dataset.taxiTo) < 0) { b.hidden = true; return; }
+    b.addEventListener('click', function () { taxiTo(b.dataset.taxiTo, true); });
   });
-  // Other activities: photos and videos from data/activities.json (same format as data/gallery.json).
-  // The first 4 items sit beside the text, the rest in the strip below. Photos open larger in the lightbox.
+  try { var qTaxi = new URLSearchParams(location.search).get('taxi'); if (qTaxi) taxiTo(qTaxi, false); } catch (e) {}
+  // Other activities: "Click here for more information" opens a pop-up with the details, photos and videos.
+  // The content is read from the Mt. Parnassus page (one place to edit). Without the pop-up, the link opens that page.
   (function () {
-    var feat = $('actFeature'), grid = $('actGallery'), lb = $('lightbox'); if (!grid) return;
-    function esc(s) { return String(s || '').replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
-    function fig(it) {
-      var cap = esc(it.caption), media = it.type === 'video'
-        ? '<video src="' + esc(it.src) + '"' + (it.poster ? ' poster="' + esc(it.poster) + '"' : '') + ' controls preload="none" playsinline></video>'
-        : '<button type="button" class="gal-open" aria-label="View larger: ' + cap + '"><img src="' + esc(it.src) + '" alt="' + cap + '" loading="lazy"></button>';
-      return '<figure class="gal-item">' + media + (cap ? '<figcaption>' + cap + '</figcaption>' : '') + '</figure>';
+    var modal = $('actModal'), body = $('actModalBody'), lb = $('lightbox'), loaded = false;
+    if (!modal || !modal.showModal) return;
+    var PAGE = 'mt-parnassus-breakfast/';
+    function fill(html) {
+      var doc = new DOMParser().parseFromString(html, 'text/html'), sec = doc.querySelector('#activities .wrap');
+      if (!sec) return false;
+      sec.querySelectorAll('dialog, [id="lightbox"]').forEach(function (el) { el.remove(); });
+      body.innerHTML = '<p class="lede am-lede">' + ((doc.querySelector('.page-hero .intro') || {}).innerHTML || '') + '</p>' + sec.innerHTML;
+      body.querySelectorAll('[data-edit]').forEach(function (el) { el.removeAttribute('data-edit'); });
+      loaded = true; return true;
     }
-    fetch(grid.dataset.src + '?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
-      if (!d || !d.items || !d.items.length) return;
-      feat.innerHTML = d.items.slice(0, 4).map(fig).join(''); grid.innerHTML = d.items.slice(4).map(fig).join('');
-    }).catch(function () {});
-    $('activities').addEventListener('click', function (e) {
-      var b = e.target.closest('.gal-open'); if (!b || !lb || !lb.showModal) return;
-      var img = b.querySelector('img'); lb.querySelector('img').src = img.src; lb.querySelector('img').alt = img.alt; lb.querySelector('p').textContent = img.alt; lb.showModal();
+    function load() {
+      if (loaded) return Promise.resolve(true);
+      var tpl = $('actModalTpl'); if (tpl) return Promise.resolve(fill(tpl.innerHTML));   // demo copies carry the content inside
+      return fetch(PAGE, { cache: 'no-cache' }).then(function (r) { return r.ok ? r.text() : ''; }).then(fill);
+    }
+    document.querySelectorAll('[data-act-modal]').forEach(function (a) {
+      a.addEventListener('click', function (e) {
+        e.preventDefault();
+        load().then(function (ok) { if (ok) { modal.showModal(); modal.scrollTop = 0; } else location.href = a.href; })
+          .catch(function () { location.href = a.href; });
+      });
+    });
+    function stopVideos() { body.querySelectorAll('video').forEach(function (v) { v.pause(); }); }
+    modal.querySelector('.lb-close').addEventListener('click', function () { modal.close(); });
+    modal.addEventListener('click', function (e) { if (e.target === modal) modal.close(); });
+    modal.addEventListener('close', stopVideos);
+    body.addEventListener('click', function (e) {
+      // "Get a taxi there" inside the pop-up: close it and fill the Taxi tab here
+      var t = e.target.closest('a[href*="taxi="]');
+      if (t) { e.preventDefault(); modal.close(); taxiTo(decodeURIComponent(t.href.split('taxi=')[1].split('#')[0]).replace(/\+/g, ' '), true); return; }
+      var g = e.target.closest('.gal-open'); if (!g || !lb) return;
+      var img = g.querySelector('img'); lb.querySelector('img').src = img.src; lb.querySelector('img').alt = img.alt; lb.querySelector('p').textContent = img.alt; lb.showModal();
     });
     if (lb) { lb.querySelector('.lb-close').addEventListener('click', function () { lb.close(); }); lb.addEventListener('click', function (e) { if (e.target === lb) lb.close(); }); }
   })();

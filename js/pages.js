@@ -67,11 +67,12 @@
   if (grid) {
     fetch(grid.dataset.src + '?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; })
       .then(function (d) { if (d && d.items && d.items.length) draw(d.items); }).catch(function () {});
-    grid.addEventListener('click', function (e) {
-      var b = e.target.closest('.gal-open'); if (!b || !lb || !lb.showModal) return;
-      var img = b.querySelector('img'); lb.querySelector('img').src = img.src; lb.querySelector('img').alt = img.alt; lb.querySelector('p').textContent = img.alt; lb.showModal();
-    });
   }
+  // Any photo with a "View larger" button (About gallery, Mt. Parnassus page) opens in the lightbox
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('.gal-open'); if (!b || !lb || !lb.showModal) return;
+    var img = b.querySelector('img'); lb.querySelector('img').src = img.src; lb.querySelector('img').alt = img.alt; lb.querySelector('p').textContent = img.alt; lb.showModal();
+  });
   if (lb) { lb.querySelector('.lb-close').addEventListener('click', function () { lb.close(); }); lb.addEventListener('click', function (e) { if (e.target === lb) lb.close(); }); }
 })();
 

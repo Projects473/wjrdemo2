@@ -49,4 +49,14 @@
     <image:image><image:loc>https://projects473.github.io/wjrdemo2/assets/taxi-noah.jpg</image:loc></image:image>
     <image:image><image:loc>https://projects473.github.io/wjrdemo2/assets/taxi-alphard.jpg</image:loc></image:image>
   </url>
+  <url>
+    <loc>https://projects473.github.io/wjrdemo2/mt-parnassus-breakfast/</loc>
+    <lastmod>2026-11-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image><image:loc>https://projects473.github.io/wjrdemo2/assets/activities/parnassus-sign.jpg</image:loc></image:image>
+    <image:image><image:loc>https://projects473.github.io/wjrdemo2/assets/activities/d-bamboo-stall.jpg</image:loc></image:image>
+    <image:image><image:loc>https://projects473.github.io/wjrdemo2/assets/activities/bamboo-breakfast-plate.jpg</image:loc></image:image>
+    <image:image><image:loc>https://projects473.github.io/wjrdemo2/assets/activities/saturday-menu.jpg</image:loc></image:image>
+  </url>
 </urlset>
