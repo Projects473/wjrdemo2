@@ -1,3 +1,21 @@
+/* Always open a page at the top (page name), not part-way down.
+   Stops the browser restoring an old scroll spot and removes #section from the address,
+   so bookmarks and shared links open at the top. Links between pages to a section (./#book) still work. */
+(function () {
+  try {
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    var ref = document.referrer, fromSite = ref && ref.indexOf(location.origin) === 0 && ref.split('#')[0] !== location.href.split('#')[0];
+    var top = function () { window.scrollTo({ top: 0, left: 0, behavior: 'instant' }); };
+    if (!location.hash || !fromSite) {
+      if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+      top(); window.addEventListener('load', top); window.addEventListener('pageshow', function (e) { if (e.persisted) top(); });
+    }
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('a[href*="#"]'); if (!a || a.target) return;
+      if (a.pathname === location.pathname && a.hash) setTimeout(function () { history.replaceState(null, '', location.pathname + location.search); }, 0);
+    });
+  } catch (e) {}
+})();
 /* Header behaviour for the detail pages (menu, language, light/dark). Built from main.js by seo.py. */
 (function () {
   var $ = function (id) { return document.getElementById(id); };

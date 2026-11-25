@@ -1,3 +1,21 @@
+/* Always open a page at the top (page name), not part-way down.
+   Stops the browser restoring an old scroll spot and removes #section from the address,
+   so bookmarks and shared links open at the top. Links between pages to a section (./#book) still work. */
+(function () {
+  try {
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    var ref = document.referrer, fromSite = ref && ref.indexOf(location.origin) === 0 && ref.split('#')[0] !== location.href.split('#')[0];
+    var top = function () { window.scrollTo({ top: 0, left: 0, behavior: 'instant' }); };
+    if (!location.hash || !fromSite) {
+      if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+      top(); window.addEventListener('load', top); window.addEventListener('pageshow', function (e) { if (e.persisted) top(); });
+    }
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('a[href*="#"]'); if (!a || a.target) return;
+      if (a.pathname === location.pathname && a.hash) setTimeout(function () { history.replaceState(null, '', location.pathname + location.search); }, 0);
+    });
+  } catch (e) {}
+})();
 (function () {
   var WA = '14734037483', F = window.WJR_FARES, DEFAULT_AREA = 4;
   var $ = function (id) { return document.getElementById(id); };
@@ -169,7 +187,7 @@
   }
   function updateTourOut() {
     var out = $('fareOut'), q = tourQuote();
-    if (q) { out.innerHTML = '<span>Tour price</span><b>EC$' + q.ec + '</b><em>US$' + q.us + '</em>'; }
+    if (q) { out.innerHTML = 'Send us your tour details and we will reply with the price, including entrance fees.'; }
     else { out.innerHTML = isCustom() ? 'Tell us the places you would like to visit and we will reply with a quote for your tour.' : 'For groups larger than 5 persons, send us your tour details and we will reply with a quote.'; }
   }
   $('toTour').addEventListener('change', function () { syncTourLen(); if (isCustom()) $('toPlaces').focus(); }); syncTourLen();
@@ -396,10 +414,8 @@
       if (q.ec) lines.push('Rate shown: ' + quoteText(q));
       lines.push('Pickup: ' + when('txDate') + ($('txTime').value ? ' at ' + $('txTime').selectedOptions[0].textContent : ''));
     } else if (tab === 'tours') {
-      var tq = tourQuote();
-      lines = [tq ? 'Hello WJR Taxi Tours & Auto Rentals, I would like to book a tour.' : 'Hello WJR Taxi Tours & Auto Rentals, could you send me a quote for a tour?', 'Tour: ' + v('toTour'), 'Length: ' + (isCustom() ? 'to be agreed' : TOUR[$('toLen').value].label), 'Date: ' + when('toDate'), 'Pickup from: ' + v('toPickup'), 'Guests: ' + $('toGuests').value];
+      lines = ['Hello WJR Taxi Tours & Auto Rentals, could you send me a quote for a tour?', 'Tour: ' + v('toTour'), 'Length: ' + (isCustom() ? 'to be agreed' : TOUR[$('toLen').value].label), 'Date: ' + when('toDate'), 'Pickup from: ' + v('toPickup'), 'Guests: ' + $('toGuests').value];
       if (isCustom()) lines.splice(2, 0, 'Places to visit: ' + v('toPlaces'));
-      if (tq) lines.push('Price shown: EC$' + tq.ec + ' / US$' + tq.us);
     } else {
       lines = ['Hello WJR Taxi Tours & Auto Rentals, I would like to rent a car.', 'Vehicle: ' + v('reCar'), 'Pick-up date: ' + when('reStart'), 'Return date: ' + when('reEnd')];
       var rc = carByOption($('reCar').value);
